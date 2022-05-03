@@ -23,13 +23,15 @@
  * @copyright   Copyright (C) 2010-2021 Combodo SARL
  * @license     http://opensource.org/licenses/AGPL-3.0
  */
+@include APPROOT."/core/oauth.php";
 
+use Combodo\iTop\Core\Authentication\Client\OAuth\OAuthClientProviderFactory;
 use Laminas\Mail\Header\ContentType;
 use Laminas\Mail\Message;
 use Laminas\Mail\Transport\File;
 use Laminas\Mail\Transport\FileOptions;
-use Laminas\Mail\Transport\SmtpOptions;
 use Laminas\Mail\Transport\Smtp;
+use Laminas\Mail\Transport\SmtpOptions;
 use Laminas\Mime\Mime;
 use Laminas\Mime\Part;
 use Pelago\Emogrifier\CssInliner;
@@ -200,8 +202,33 @@ class EMail
 			}
 			$oOptions = new SmtpOptions($aOptions);
 			$oTransport->setOptions($oOptions);
-			break;
 
+			\Laminas\Mail\Protocol\Smtp\Auth\Oauth::setProvider(OAuthClientProviderFactory::getProviderForSMTP());
+			break;
+		case 'SMTP_OAuth':
+			$sHost = self::$m_oConfig->Get('email_transport_smtp.host');
+			$sPort = self::$m_oConfig->Get('email_transport_smtp.port');
+			$sEncryption = self::$m_oConfig->Get('email_transport_smtp.encryption');
+			$sUserName = self::$m_oConfig->Get('email_transport_smtp.username');
+
+			$oTransport = new Smtp();
+			$aOptions= [
+				'host'              => $sHost,
+				'port'              => $sPort,
+				'connection_class'  => 'Laminas\Mail\Protocol\Smtp\Auth\Oauth',
+				'connection_config' => [
+					'ssl' => $sEncryption,
+				],
+			];
+			if (strlen($sUserName) > 0)
+			{
+				$aOptions['connection_config']['username'] = $sUserName;
+			}
+			$oOptions = new SmtpOptions($aOptions);
+			$oTransport->setOptions($oOptions);
+
+			\Laminas\Mail\Protocol\Smtp\Auth\Oauth::setProvider(OAuthClientProviderFactory::getProviderForSMTP());
+			break;
 		case 'Null':
 			$oTransport = new Smtp();
 			break;

@@ -168,6 +168,7 @@ $ibo-vendors-jqueryui--ui-slider--ui-slider-handle--hover--border-color: $ibo-co
 		left: 0;
 		top: 0;
 	}
+  ui-controlgroup
 	.ui-button {
 		@extend .ibo-button, .ibo-is-regular, .ibo-is-secondary;
 		> .ui-icon {
@@ -606,4 +607,16 @@ $ibo-vendors-jqueryui--ui-slider--ui-slider-handle--hover--border-color: $ibo-co
 // Tabs
 .ui-tabs-tab.ui-state-disabled a{
   cursor: not-allowed !important;
+}
+
+// Controlgroup
+.ui-controlgroup .ui-button {
+  @extend .ibo-button, .ibo-is-regular, .ibo-is-secondary;
+  &.ui-state-active{
+    @extend :hover;
+  }
+  max-height: 64px;
+  > img{
+    max-height: 48px;
+  }
 }

@@ -1,0 +1,13 @@
+.ibo-oauth-wizard .ibo-panel--body{
+  display: flex;
+  flex-direction: row;
+  .ibo-oauth-wizard--form--container{
+    flex-grow: 1;
+  }
+  .ibo-oauth-wizard--illustration svg{
+    max-height: 400px;
+  }
+}
+#ibo-oauth-wizard--conf--result{
+  white-space: pre-wrap
+}
