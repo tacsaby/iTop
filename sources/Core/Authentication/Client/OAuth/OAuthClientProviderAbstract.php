@@ -3,6 +3,7 @@ namespace Combodo\iTop\Core\Authentication\Client\OAuth;
 
 use League\OAuth2\Client\Provider\GenericProvider;
 use League\OAuth2\Client\Token\AccessToken;
+use utils;
 
 abstract class OAuthClientProviderAbstract implements IOAuthClientProvider
 {
@@ -12,7 +13,7 @@ abstract class OAuthClientProviderAbstract implements IOAuthClientProvider
 	static protected $sVendorColors = ['', '', '', ''];
 	/** @var string */
 	static protected $sVendorIcon = '';
-	static protected $sRedirectUri = 'http://localhost/iTop/pages/oauth.landing.php';
+	static protected $sRedirectUri = '';
 	/** @var \League\OAuth2\Client\Provider\GenericProvider */
 	protected $oVendorProvider;
 	/** @var \League\OAuth2\Client\Token\AccessToken */
@@ -89,11 +90,23 @@ EOF;
 	{
 		return static::$sVendorColors;
 	}
+
+	/**
+	 * @return void
+	 * @throws \Exception
+	 */
+	public static function InitizalizeRedirectUri(): void
+	{
+		static::$sRedirectUri = utils::GetAbsoluteUrlAppRoot().'pages/oauth.landing.php';
+	}
 	/**
 	 * @return string
 	 */
 	public static function GetRedirectUri(): string
 	{
+		if(static::$sRedirectUri === ''){
+			static::InitizalizeRedirectUri();
+		}
 		return static::$sRedirectUri;
 	}
 }

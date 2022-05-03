@@ -24,7 +24,7 @@ class OAuthClientProviderFactory {
 	}
 
 	public static function getVendorProviderForAccessUrl($sProviderVendor, $sClientId, $sClientSecret, $sScope){
-		$sRedirectUrl = 'http://localhost/iTop/pages/oauth.landing.php';
+		$sRedirectUrl = OAuthClientProviderAbstract::GetRedirectUri();
 		$sProviderClass = "\Combodo\iTop\Core\Authentication\Client\OAuth\OAuthClientProvider".$sProviderVendor;
 		
 		$oProvider = new $sProviderClass(['clientId' => $sClientId, 'clientSecret' => $sClientSecret, 'redirectUri' => $sRedirectUrl, 'scope' => $sScope]);
@@ -37,7 +37,7 @@ class OAuthClientProviderFactory {
 
 	public static function getConfFromRedirectUrl($sProviderVendor, $sClientId, $sClientSecret, $sRedirectUrlQuery)
 	{
-		$sRedirectUrl = 'http://localhost/iTop/pages/oauth.landing.php';
+		$sRedirectUrl = OAuthClientProviderAbstract::GetRedirectUri();
 		$sProviderClass = "\Combodo\iTop\Core\Authentication\Client\OAuth\OAuthClientProvider".$sProviderVendor;
 		$aQuery = [];
 		parse_str($sRedirectUrlQuery, $aQuery);
