@@ -11,7 +11,7 @@ class OAuthClientProviderGoogle extends OAuthClientProviderAbstract {
 	/** @var array */
 	static protected $sVendorColors = ['#DB4437', '#F4B400', '#0F9D58', '#4285F4'];
 	/** @var string */
-	static	protected $sVendorIcon = 'http://localhost/iTop/images/icons/icons8-google.svg';
+	static	protected $sVendorIcon = '../images/icons/icons8-google.svg';
 	/** @var \League\OAuth2\Client\Provider\GenericProvider */
 	protected $oVendorProvider;
     /** @var \League\OAuth2\Client\Token\AccessToken */

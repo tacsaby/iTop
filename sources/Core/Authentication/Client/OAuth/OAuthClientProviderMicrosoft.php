@@ -1,7 +1,6 @@
 <?php
 namespace Combodo\iTop\Core\Authentication\Client\OAuth;
 
-use League\OAuth2\Client\Provider\GenericProvider;
 use League\OAuth2\Client\Token\AccessToken;
 use Stevenmaguire\OAuth2\Client\Provider\Microsoft;
 
@@ -11,7 +10,7 @@ class OAuthClientProviderMicrosoft extends OAuthClientProviderAbstract{
 	/** @var array */
 	static protected $sVendorColors = ['#0766b7', '#0d396b', '#2893df', '#3ccbf4'];
 	/** @var string */
-	static	protected $sVendorIcon = 'http://localhost/iTop/images/icons/icons8-azure.svg';
+	static	protected $sVendorIcon = '../images/icons/icons8-azure.svg';
 	/** @var \League\OAuth2\Client\Provider\GenericProvider */
 	protected $oVendorProvider;
     /** @var \League\OAuth2\Client\Token\AccessToken */
