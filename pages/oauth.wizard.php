@@ -97,7 +97,7 @@ $sFormJs = <<<JS
 			'$sAjaxUri',
 			{
 				operation: 'get_authorization_url',
-				provider: $('[name="provider"]').val(),
+				provider: $('[name="provider"]:checked').val(),
 				client_id: $(this).find('[name="client_id"]').val(),
 				client_secret: $(this).find('[name="client_secret"]').val(),
 				scope: $(this).find('[name="scope"]').val(),
