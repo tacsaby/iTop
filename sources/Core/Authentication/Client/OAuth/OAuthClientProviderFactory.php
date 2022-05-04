@@ -23,11 +23,11 @@ class OAuthClientProviderFactory {
 		return new $sProviderClass($aProviderVendorParams, $aAccessTokenParams);
 	}
 
-	public static function getVendorProviderForAccessUrl($sProviderVendor, $sClientId, $sClientSecret, $sScope){
+	public static function getVendorProviderForAccessUrl($sProviderVendor, $sClientId, $sClientSecret, $sScope, $aAdditional){
 		$sRedirectUrl = OAuthClientProviderAbstract::GetRedirectUri();
 		$sProviderClass = "\Combodo\iTop\Core\Authentication\Client\OAuth\OAuthClientProvider".$sProviderVendor;
 		
-		$oProvider = new $sProviderClass(['clientId' => $sClientId, 'clientSecret' => $sClientSecret, 'redirectUri' => $sRedirectUrl, 'scope' => $sScope]);
+		$oProvider = new $sProviderClass(array_merge(['clientId' => $sClientId, 'clientSecret' => $sClientSecret, 'redirectUri' => $sRedirectUrl, 'scope' => $sScope], $aAdditional));
 		return $oProvider->GetVendorProvider()->getAuthorizationUrl([
 			'scope' => [
 				$sScope

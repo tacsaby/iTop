@@ -22,8 +22,10 @@ try {
 			$sClientId = utils::ReadParam('client_id', '', false, 'raw');
 			$sClientSecret = utils::ReadParam('client_secret', '', false, 'raw');
 			$sScope = utils::ReadParam('scope', '', false, 'raw');
-
-			$sAuthorizationUrl = OAuthClientProviderFactory::getVendorProviderForAccessUrl($sProvider, $sClientId, $sClientSecret, $sScope);
+			$sAdditional = utils::ReadParam('additional', '', false, 'raw');
+			$aAdditional = [];
+			parse_str($sAdditional, $aAdditional);
+			$sAuthorizationUrl = OAuthClientProviderFactory::getVendorProviderForAccessUrl($sProvider, $sClientId, $sClientSecret, $sScope, $aAdditional);
 			$aResult['data']['authorization_url'] = $sAuthorizationUrl;
 			break;
 		case 'get_display_authentication_results':

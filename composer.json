@@ -24,7 +24,8 @@
     "symfony/framework-bundle": "~3.4.47",
     "symfony/polyfill-php70": "1.*",
     "symfony/twig-bundle": "~3.4.47",
-    "symfony/yaml": "~3.4.47"
+    "symfony/yaml": "~3.4.47",
+    "thenetworg/oauth2-azure": "^2.0"
   },
   "require-dev": {
     "symfony/stopwatch": "~3.4.47",

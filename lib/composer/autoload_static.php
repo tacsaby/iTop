@@ -29,6 +29,7 @@ class ComposerStaticInit0018331147de7601e7552f7da8e3bb8b
         array (
             'Twig\\' => 5,
             'TrueBV\\' => 7,
+            'TheNetworg\\OAuth2\\Client\\' => 25,
         ),
         'S' => 
         array (
@@ -96,6 +97,10 @@ class ComposerStaticInit0018331147de7601e7552f7da8e3bb8b
             'GuzzleHttp\\Promise\\' => 19,
             'GuzzleHttp\\' => 11,
         ),
+        'F' => 
+        array (
+            'Firebase\\JWT\\' => 13,
+        ),
     );
 
     public static $prefixDirsPsr4 = array (
@@ -106,6 +111,10 @@ class ComposerStaticInit0018331147de7601e7552f7da8e3bb8b
         'TrueBV\\' => 
         array (
             0 => __DIR__ . '/..' . '/true/punycode/src',
+        ),
+        'TheNetworg\\OAuth2\\Client\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/thenetworg/oauth2-azure/src',
         ),
         'Symfony\\Polyfill\\Util\\' => 
         array (
@@ -311,6 +320,10 @@ class ComposerStaticInit0018331147de7601e7552f7da8e3bb8b
         'GuzzleHttp\\' => 
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/guzzle/src',
+        ),
+        'Firebase\\JWT\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/firebase/php-jwt/src',
         ),
     );
 
@@ -640,6 +653,7 @@ class ComposerStaticInit0018331147de7601e7552f7da8e3bb8b
         'Combodo\\iTop\\Core\\Authentication\\Client\\OAuth\\IOAuthClientProvider' => __DIR__ . '/../..' . '/sources/Core/Authentication/Client/OAuth/IOAuthClientProvider.php',
         'Combodo\\iTop\\Core\\Authentication\\Client\\OAuth\\IOAuthClientResultDisplay' => __DIR__ . '/../..' . '/sources/Core/Authentication/Client/OAuth/IOAuthClientResultDisplay.php',
         'Combodo\\iTop\\Core\\Authentication\\Client\\OAuth\\OAuthClientProviderAbstract' => __DIR__ . '/../..' . '/sources/Core/Authentication/Client/OAuth/OAuthClientProviderAbstract.php',
+        'Combodo\\iTop\\Core\\Authentication\\Client\\OAuth\\OAuthClientProviderAzure' => __DIR__ . '/../..' . '/sources/Core/Authentication/Client/OAuth/OAuthClientProviderAzure.php',
         'Combodo\\iTop\\Core\\Authentication\\Client\\OAuth\\OAuthClientProviderFactory' => __DIR__ . '/../..' . '/sources/Core/Authentication/Client/OAuth/OAuthClientProviderFactory.php',
         'Combodo\\iTop\\Core\\Authentication\\Client\\OAuth\\OAuthClientProviderGoogle' => __DIR__ . '/../..' . '/sources/Core/Authentication/Client/OAuth/OAuthClientProviderGoogle.php',
         'Combodo\\iTop\\Core\\Authentication\\Client\\OAuth\\OAuthClientProviderMicrosoft' => __DIR__ . '/../..' . '/sources/Core/Authentication/Client/OAuth/OAuthClientProviderMicrosoft.php',
@@ -816,6 +830,12 @@ class ComposerStaticInit0018331147de7601e7552f7da8e3bb8b
         'FilterFromAttribute' => __DIR__ . '/../..' . '/core/filterdef.class.inc.php',
         'FilterPrivateKey' => __DIR__ . '/../..' . '/core/filterdef.class.inc.php',
         'FindStylesheetObject' => __DIR__ . '/../..' . '/application/findstylesheetobject.class.inc.php',
+        'Firebase\\JWT\\BeforeValidException' => __DIR__ . '/..' . '/firebase/php-jwt/src/BeforeValidException.php',
+        'Firebase\\JWT\\ExpiredException' => __DIR__ . '/..' . '/firebase/php-jwt/src/ExpiredException.php',
+        'Firebase\\JWT\\JWK' => __DIR__ . '/..' . '/firebase/php-jwt/src/JWK.php',
+        'Firebase\\JWT\\JWT' => __DIR__ . '/..' . '/firebase/php-jwt/src/JWT.php',
+        'Firebase\\JWT\\Key' => __DIR__ . '/..' . '/firebase/php-jwt/src/Key.php',
+        'Firebase\\JWT\\SignatureInvalidException' => __DIR__ . '/..' . '/firebase/php-jwt/src/SignatureInvalidException.php',
         'FunctionExpression' => __DIR__ . '/../..' . '/core/oql/expression.class.inc.php',
         'FunctionOqlExpression' => __DIR__ . '/../..' . '/core/oql/oqlquery.class.inc.php',
         'GraphEdge' => __DIR__ . '/../..' . '/core/simplegraph.class.inc.php',
@@ -2722,6 +2742,10 @@ class ComposerStaticInit0018331147de7601e7552f7da8e3bb8b
         'TemplateMenuNode' => __DIR__ . '/../..' . '/application/menunode.class.inc.php',
         'TemplateString' => __DIR__ . '/../..' . '/core/templatestring.class.inc.php',
         'TemplateStringPlaceholder' => __DIR__ . '/../..' . '/core/templatestring.class.inc.php',
+        'TheNetworg\\OAuth2\\Client\\Grant\\JwtBearer' => __DIR__ . '/..' . '/thenetworg/oauth2-azure/src/Grant/JwtBearer.php',
+        'TheNetworg\\OAuth2\\Client\\Provider\\Azure' => __DIR__ . '/..' . '/thenetworg/oauth2-azure/src/Provider/Azure.php',
+        'TheNetworg\\OAuth2\\Client\\Provider\\AzureResourceOwner' => __DIR__ . '/..' . '/thenetworg/oauth2-azure/src/Provider/AzureResourceOwner.php',
+        'TheNetworg\\OAuth2\\Client\\Token\\AccessToken' => __DIR__ . '/..' . '/thenetworg/oauth2-azure/src/Token/AccessToken.php',
         'ThemeHandler' => __DIR__ . '/../..' . '/application/themehandler.class.inc.php',
         'ThemeHandlerService' => __DIR__ . '/../..' . '/application/themehandlerservice.class.inc.php',
         'ToolsLog' => __DIR__ . '/../..' . '/core/log.class.inc.php',

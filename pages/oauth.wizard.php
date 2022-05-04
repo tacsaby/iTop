@@ -101,6 +101,7 @@ $sFormJs = <<<JS
 				client_id: $(this).find('[name="client_id"]').val(),
 				client_secret: $(this).find('[name="client_secret"]').val(),
 				scope: $(this).find('[name="scope"]').val(),
+				additional: $(this).find('[name="additional"]').val()
 			},
 			function(oData){
 				if(oData.status == 'success')

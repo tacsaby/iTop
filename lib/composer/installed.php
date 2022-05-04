@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '178ba609737d18cacb6c07e825aaf3357b666b93',
+        'reference' => '4a31b95f20ae35c3c0eeaf6ddfcce1de4b929f63',
         'name' => '__root__',
         'dev' => true,
     ),
@@ -16,7 +16,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '178ba609737d18cacb6c07e825aaf3357b666b93',
+            'reference' => '4a31b95f20ae35c3c0eeaf6ddfcce1de4b929f63',
             'dev_requirement' => false,
         ),
         'combodo/tcpdf' => array(
@@ -42,6 +42,15 @@
             'provided' => array(
                 0 => '^1.2',
             ),
+        ),
+        'firebase/php-jwt' => array(
+            'pretty_version' => 'v5.5.1',
+            'version' => '5.5.1.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../firebase/php-jwt',
+            'aliases' => array(),
+            'reference' => '83b609028194aa042ea33b5af2d41a7427de80e6',
+            'dev_requirement' => false,
         ),
         'guzzlehttp/guzzle' => array(
             'pretty_version' => '6.5.5',
@@ -598,6 +607,15 @@
             'replaced' => array(
                 0 => '6.3.5',
             ),
+        ),
+        'thenetworg/oauth2-azure' => array(
+            'pretty_version' => 'v2.0.1',
+            'version' => '2.0.1.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../thenetworg/oauth2-azure',
+            'aliases' => array(),
+            'reference' => '2649422a0dc74af32d21d9d738d37abcd5b03998',
+            'dev_requirement' => false,
         ),
         'true/punycode' => array(
             'pretty_version' => 'v2.1.1',
