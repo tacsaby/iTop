@@ -20,10 +20,10 @@ class OAuthClientProviderAzure extends OAuthClientProviderAbstract{
 	protected $oAccessToken;
 
 	public function __construct($aVendorProvider, $aAccessTokenParams = []){
-		$this->oVendorProvider = new Azure(['prompt'=>'consent',
+		$this->oVendorProvider = new Azure(array_merge(['prompt'=>'consent',
 		                                    'scope' => 'offline_access',
 		                                    'defaultEndPointVersion' => Azure::ENDPOINT_VERSION_2_0],
-			$aVendorProvider);
+			$aVendorProvider));
 		
 		if(!empty($aAccessTokenParams)){
 			$this->oAccessToken = new AccessToken(["access_token" =>  $aAccessTokenParams["access_token"],
