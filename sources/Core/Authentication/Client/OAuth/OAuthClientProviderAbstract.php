@@ -14,6 +14,9 @@ abstract class OAuthClientProviderAbstract implements IOAuthClientProvider
 	/** @var string */
 	static protected $sVendorIcon = '';
 	static protected $sRedirectUri = '';
+	static protected $sRequiredSMTPScope = '';
+	static protected $sRequiredIMAPScope = '';
+	static protected $sRequiredPOPScope = '';
 	/** @var \League\OAuth2\Client\Provider\GenericProvider */
 	protected $oVendorProvider;
 	/** @var \League\OAuth2\Client\Token\AccessToken */
@@ -109,4 +112,30 @@ EOF;
 		}
 		return static::$sRedirectUri;
 	}
+
+	/**
+	 * @return string
+	 */
+	public static function GetRequiredSMTPScope(): string
+	{
+		return self::$sRequiredSMTPScope;
+	}
+
+	/**
+	 * @return string
+	 */
+	public static function GetRequiredIMAPScope(): string
+	{
+		return self::$sRequiredIMAPScope;
+	}
+
+	/**
+	 * @return string
+	 */
+	public static function GetRequiredPOPScope(): string
+	{
+		return self::$sRequiredPOPScope;
+	}
+	
+	
 }

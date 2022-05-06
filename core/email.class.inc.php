@@ -202,8 +202,6 @@ class EMail
 			}
 			$oOptions = new SmtpOptions($aOptions);
 			$oTransport->setOptions($oOptions);
-
-			\Laminas\Mail\Protocol\Smtp\Auth\Oauth::setProvider(OAuthClientProviderFactory::getProviderForSMTP());
 			break;
 		case 'SMTP_OAuth':
 			$sHost = self::$m_oConfig->Get('email_transport_smtp.host');

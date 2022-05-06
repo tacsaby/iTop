@@ -67,7 +67,8 @@ class Oauth extends Login
 			} 
 			elseif (self::$oProvider->GetAccessToken()->hasExpired()) {
 				self::$oProvider->SetAccessToken(self::$oProvider->GetVendorProvider()->getAccessToken('refresh_token', [
-					'refresh_token' => self::$oProvider->GetAccessToken()->getRefreshToken()
+					'refresh_token' => self::$oProvider->GetAccessToken()->getRefreshToken(),
+					'scope' => self::$oProvider->GetVendorProvider()->scope 
 				]));
 			}
 		}

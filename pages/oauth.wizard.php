@@ -62,9 +62,11 @@ const openSignInWindow = (url, name) => {
 			'$sAjaxUri',
 			{
 				operation: 'get_display_authentication_results',
-				provider: $('[name="provider"]').val(),
+				provider: $('[name="provider"]:checked').val(),
 				client_id: $('[name="client_id"]').val(),
 				client_secret: $('[name="client_secret"]').val(),
+				scope: $(this).find('[name="scope"]').val(),
+				additional: $(this).find('[name="additional"]').val(),
 				redirect_url: event.data,
 			},
 			function(oData){

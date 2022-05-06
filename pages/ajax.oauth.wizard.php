@@ -33,18 +33,22 @@ try {
 			$sRedirectUrl = utils::ReadParam('redirect_url', '', false, 'raw');
 			$sClientId = utils::ReadParam('client_id', '', false, 'raw');
 			$sClientSecret = utils::ReadParam('client_secret', '', false, 'raw');
+			$sScope = utils::ReadParam('scope', '', false, 'raw');
+			$sAdditional = utils::ReadParam('additional', '', false, 'raw');
 
 			$sRedirectUrlQuery = parse_url($sRedirectUrl)['query'];
 			$aOAuthResultDisplayClasses = utils::GetClassesForInterface('Combodo\iTop\Core\Authentication\Client\OAuth\IOAuthClientResultDisplay', '', array('[\\\\/]lib[\\\\/]', '[\\\\/]node_modules[\\\\/]', '[\\\\/]test[\\\\/]'));
+			$aAdditional = [];
+			parse_str($sAdditional, $aAdditional);
 
 			$sProviderClass = "\Combodo\iTop\Core\Authentication\Client\OAuth\OAuthClientProvider".$sProvider;
 			$sRedirectUrl = OAuthClientProviderAbstract::GetRedirectUri();
+			
 			$aQuery = [];
 			parse_str($sRedirectUrlQuery, $aQuery);
 			$sCode = $aQuery['code'];
-			$oProvider = new $sProviderClass(['clientId' => $sClientId, 'clientSecret' => $sClientSecret, 'redirectUri' => $sRedirectUrl]);
-			$oAccessToken = $oProvider->GetVendorProvider()->getAccessToken('authorization_code', ['code' => $sCode]);
-
+			$oProvider = OAuthClientProviderFactory::getVendorProvider($sProvider, $sClientId, $sClientSecret, $sScope, $aAdditional);
+			$oAccessToken = OAuthClientProviderFactory::getAccessTokenFromCode($oProvider, $sCode);
 
 			foreach($aOAuthResultDisplayClasses as $sOAuthClass) {
 				$aResult['data'][] = $sOAuthClass::GetResultDisplayScript($sClientId, $sClientSecret, $sProvider, $oAccessToken);
