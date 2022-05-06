@@ -118,7 +118,7 @@ EOF;
 	 */
 	public static function GetRequiredSMTPScope(): string
 	{
-		return self::$sRequiredSMTPScope;
+		return static::$sRequiredSMTPScope;
 	}
 
 	/**
@@ -126,7 +126,7 @@ EOF;
 	 */
 	public static function GetRequiredIMAPScope(): string
 	{
-		return self::$sRequiredIMAPScope;
+		return static::$sRequiredIMAPScope;
 	}
 
 	/**
@@ -134,7 +134,7 @@ EOF;
 	 */
 	public static function GetRequiredPOPScope(): string
 	{
-		return self::$sRequiredPOPScope;
+		return static::$sRequiredPOPScope;
 	}
 	
 	
