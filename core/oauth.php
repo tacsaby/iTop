@@ -1,9 +1,10 @@
 <?php
+
 namespace Laminas\Mail\Protocol\Smtp\Auth;
 
-use Combodo\iTop\Core\Authentication\Client\OAuth\OAuthClientProviderAbstract as OAuthClientProviderAbstractAlias;
-use Combodo\iTop\Core\Authentication\Client\OAuth\OAuthClientProviderGoogle;
-use League\OAuth2\Client\Provider\AbstractProvider;
+use Combodo\iTop\Core\Authentication\Client\OAuth\OAuthClientProviderAbstract;
+use IssueLog;
+use Laminas\Mail\Protocol\Exception\RuntimeException;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 
 class Oauth extends Login
@@ -11,10 +12,11 @@ class Oauth extends Login
 	/**
 	 * LOGIN username
 	 *
-	 * @var OAuthClientProviderAbstractAlias
+	 * @var OAuthClientProviderAbstract
 	 */
 	protected static $oProvider;
 
+	const LOG_CHANNEL = 'OAuth';
 	/**
 	 * Constructor.
 	 *
@@ -24,7 +26,6 @@ class Oauth extends Login
 	 */
 	public function __construct($host = '127.0.0.1', $port = null, $config = null)
 	{
-		// Did we receive a configuration array?
 		$origConfig = $config;
 		if (is_array($host)) {
 			// Merge config array with principal array, if provided
@@ -40,17 +41,17 @@ class Oauth extends Login
 				$this->setUsername($config['username']);
 			}
 		}
-		
+
 		// Call parent with original arguments
 		parent::__construct($host, $port, $origConfig);
 	}
 
 	/**
-	 * @param OAuthClientProviderAbstractAlias $oProvider
+	 * @param OAuthClientProviderAbstract $oProvider
 	 *
 	 * @return void
 	 */
-	public static function setProvider(OAuthClientProviderAbstractAlias $oProvider): void
+	public static function setProvider(OAuthClientProviderAbstract $oProvider): void
 	{
 		self::$oProvider = $oProvider;
 	}
@@ -64,48 +65,58 @@ class Oauth extends Login
 		try {
 			if (empty(self::$oProvider->GetAccessToken())) {
 				throw new IdentityProviderException('Not prior authentication to OAuth', 255, []);
-			} 
-			elseif (self::$oProvider->GetAccessToken()->hasExpired()) {
+			} elseif (self::$oProvider->GetAccessToken()->hasExpired()) {
 				self::$oProvider->SetAccessToken(self::$oProvider->GetVendorProvider()->getAccessToken('refresh_token', [
 					'refresh_token' => self::$oProvider->GetAccessToken()->getRefreshToken(),
-					'scope' => self::$oProvider->GetScope(),
+					'scope'         => self::$oProvider->GetScope(),
 				]));
 			}
 		}
 		catch (IdentityProviderException $e) {
-			\IssueLog::Error('Failed to get oAuth credentials for outgoing mails');
+			IssueLog::Error('Failed to get oAuth credentials for outgoing mails for provider '.self::$oProvider::GetVendorName(), static::LOG_CHANNEL);
+
 			return false;
 		}
 		$sAccessToken = self::$oProvider->GetAccessToken()->getToken();
 
 		if (empty($sAccessToken)) {
+			IssueLog::Error('No OAuth token for outgoing mails for provider '.self::$oProvider::GetVendorName(), static::LOG_CHANNEL);
+
 			return false;
 		}
 
-		$this->_send('AUTH XOAUTH2 '.base64_encode("user={$this->username}\1auth=Bearer {$sAccessToken}\1\1"));
+		$this->_send('AUTH XOAUTH2 '.base64_encode("user=$this->username\1auth=Bearer $sAccessToken\1\1"));
+		IssueLog::Debug("SMTP Oauth sending AUTH XOAUTH2 user=$this->username auth=Bearer $sAccessToken", static::LOG_CHANNEL);
 
-		while (true) {
-			$response = $this->_receive();
+		try {
+			while (true) {
+				$sResponse = $this->_receive(60);
 
-			$isPlus = $response === '+';
-			if ($isPlus) {
-				// Send empty client response.
-				$this->_send('');
-			} else {
-				if (
-					preg_match('/Unauthorized/i', $response) ||
-					preg_match('/Rejected/i', $response)||
-					preg_match('/535/i', $response)
-				) {
-					return false;
-				}
-				if (preg_match("/OK /i", $response)||
-					preg_match('/Accepted/i', $response)|| 
-					preg_match('/235/i', $response)) {
-					$this->auth = true;
-					return true;
+				IssueLog::Debug("SMTP Oauth receiving $sResponse", static::LOG_CHANNEL);
+
+				if ($sResponse === '+') {
+					// Send empty client response.
+					$this->_send('');
+				} else {
+					if (preg_match('/Unauthorized/i', $sResponse) ||
+						preg_match('/Rejected/i', $sResponse) ||
+						preg_match('/^(535|432|454|534|500|530|538)/', $sResponse)) {
+						IssueLog::Error('Unable to authenticate for outgoing mails for provider '.self::$oProvider::GetVendorName()." Error: $sResponse", static::LOG_CHANNEL);
+
+						return false;
+					}
+					if (preg_match("/OK /i", $sResponse) ||
+						preg_match('/Accepted/i', $sResponse) ||
+						preg_match('/^235/i', $sResponse)) {
+						$this->auth = true;
+
+						return true;
+					}
+
 				}
 			}
+		} catch (RuntimeException $e) {
+			IssueLog::Error('Timeout connection for outgoing mails for provider '.self::$oProvider::GetVendorName(), static::LOG_CHANNEL);
 		}
 		return false;
 	}

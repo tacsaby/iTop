@@ -154,6 +154,5 @@ EOF;
 	{
 		$this->sScope = $sScope;
 	}
-	
-	
+
 }
