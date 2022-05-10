@@ -17,8 +17,8 @@ class OAuthClientProviderGoogle extends OAuthClientProviderAbstract {
     /** @var \League\OAuth2\Client\Token\AccessToken */
 	protected $oAccessToken;
 
-	public function __construct($aVendorProvider, $aAccessTokenParams = []){
-		$this->oVendorProvider = new Google(array_merge(['prompt'=>'consent', 'accessType' => 'offline'], $aVendorProvider));
+	public function __construct($aVendorProvider, array $collaborators = [], array $aAccessTokenParams = []){
+		$this->oVendorProvider = new Google(array_merge(['prompt'=>'consent', 'accessType' => 'offline'], $aVendorProvider), $collaborators);
 		
 		if(!empty($aAccessTokenParams)){
 			$this->oAccessToken = new AccessToken(["access_token" =>  $aAccessTokenParams["access_token"],
@@ -26,6 +26,10 @@ class OAuthClientProviderGoogle extends OAuthClientProviderAbstract {
 			                                                      "refresh_token" => $aAccessTokenParams["refresh_token"],
 			                                                      "token_type" => "Bearer"
 			]);			
+		}
+
+		if (isset($aVendorProvider['scope'])) {
+			$this->SetScope($aVendorProvider['scope']);
 		}
 	}
 }

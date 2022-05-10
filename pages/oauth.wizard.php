@@ -18,7 +18,7 @@ LoginWebPage::DoLogin(); // Check user rights and prompt if needed
 
 $oLayout = new PageContent();
 $oLayout->AddCSSClass('ibo-oauth-wizard');
-$oPage = new iTopWebPage(Dict::S('UI:Schema:Title'));
+$oPage = new iTopWebPage(Dict::S('UI:OAuth:Wizard:Page:Title'));
 $oPage->SetContentLayout($oLayout);
 $sReturnUri = utils::GetAbsoluteUrlAppRoot().'pages/oauth.landing.php';
 $sAjaxUri = utils::GetAbsoluteUrlAppRoot().'pages/ajax.oauth.wizard.php';

@@ -19,7 +19,9 @@
 
 // Navigation menu
 Dict::Add('EN US', 'English', 'English', array(
-	'UI:OAuth:Wizard:Form:Panel:Title' => 'OAuth wizard',
+	'Menu:OAuthWizardMenu' => 'OAuth 2.0',
+	'UI:OAuth:Wizard:Page:Title' => 'OAuth 2.0 Configuration',
+	'UI:OAuth:Wizard:Form:Panel:Title' => 'OAuth 2.0 Configuration',
 	'UI:OAuth:Wizard:Form:Input:ClientId:Label' => 'Client Id',
 	'UI:OAuth:Wizard:Form:Input:ClientSecret:Label' => 'Client Secret',
 	'UI:OAuth:Wizard:Form:Input:Scope:Label' => 'Scope',

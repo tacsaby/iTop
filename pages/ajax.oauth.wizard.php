@@ -57,6 +57,7 @@ try {
 }
 catch(Exception $e){
 	$aResult['status'] = 'error';
+	IssueLog::Error($e->getMessage());
 }
 $oPage->SetData($aResult);
 $oPage->output();

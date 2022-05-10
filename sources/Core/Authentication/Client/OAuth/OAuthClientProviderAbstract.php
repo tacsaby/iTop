@@ -22,6 +22,8 @@ abstract class OAuthClientProviderAbstract implements IOAuthClientProvider
 	/** @var \League\OAuth2\Client\Token\AccessToken */
 	protected $oAccessToken;
 
+	protected $sScope;
+
 
 	/**
 	 * @return \League\OAuth2\Client\Provider\GenericProvider
@@ -135,6 +137,22 @@ EOF;
 	public static function GetRequiredPOPScope(): string
 	{
 		return static::$sRequiredPOPScope;
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function GetScope()
+	{
+		return $this->sScope;
+	}
+
+	/**
+	 * @param mixed $sScope
+	 */
+	public function SetScope($sScope): void
+	{
+		$this->sScope = $sScope;
 	}
 	
 	

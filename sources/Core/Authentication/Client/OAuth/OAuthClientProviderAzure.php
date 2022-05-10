@@ -19,11 +19,11 @@ class OAuthClientProviderAzure extends OAuthClientProviderAbstract{
     /** @var \League\OAuth2\Client\Token\AccessToken */
 	protected $oAccessToken;
 
-	public function __construct($aVendorProvider, $aAccessTokenParams = []){
+	public function __construct($aVendorProvider, array $collaborators = [], array $aAccessTokenParams = []){
 		$this->oVendorProvider = new Azure(array_merge(['prompt'=>'consent',
 		                                    'scope' => 'offline_access',
 		                                    'defaultEndPointVersion' => Azure::ENDPOINT_VERSION_2_0],
-			$aVendorProvider));
+			$aVendorProvider), $collaborators);
 		
 		if(!empty($aAccessTokenParams)){
 			$this->oAccessToken = new AccessToken(["access_token" =>  $aAccessTokenParams["access_token"],
@@ -31,6 +31,10 @@ class OAuthClientProviderAzure extends OAuthClientProviderAbstract{
 			                                                      "refresh_token" => $aAccessTokenParams["refresh_token"],
 			                                                      "token_type" => "Bearer"
 			]);			
+		}
+
+		if (isset($aVendorProvider['scope'])) {
+			$this->SetScope($aVendorProvider['scope']);
 		}
 	}
 }
