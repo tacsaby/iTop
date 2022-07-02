@@ -43,8 +43,9 @@ class Cron
 	 * @throws \MySQLHasGoneAwayException
 	 * @throws \OQLException
 	 * @throws \ReflectionException
+	 * @throws \Exception
 	 */
-	public function CronExec($oP, $bVerbose, $bDebug = false)
+	public function CronExec($oP, bool $bVerbose, bool $bDebug = false)
 	{
 		$iStarted = time();
 		$iMaxDuration = MetaModel::GetConfig()->Get('cron_max_execution_time');
@@ -79,9 +80,13 @@ class Cron
 					$oP->p('+---------------------------+---------+---------------------+---------------------+');
 				}
 				while ($oTask = $oTasks->Fetch()) {
+					$sTaskName = $oTask->Get('class_name');
+					if ($this->IsTaskRunning($sTaskName)) {
+						// Already running, ignore
+						continue;
+					}
 					$aTasks[] = $oTask;
 					if ($bVerbose) {
-						$sTaskName = $oTask->Get('class_name');
 						$sStatus = $oTask->Get('status');
 						$sLastRunDate = $oTask->Get('latest_run_date');
 						$sNextRunDate = $oTask->Get('next_run_date');
@@ -97,7 +102,7 @@ class Cron
 					$sTaskClass = $oTask->Get('class_name');
 
 					// Check if the current task is running
-					$oTaskMutex = new iTopMutex("cron_$sTaskClass");
+					$oTaskMutex = $this->GetTaskMutex($sTaskClass);
 					if (!$oTaskMutex->TryLock()) {
 						// Task is already running, try next one
 						continue;
@@ -106,7 +111,7 @@ class Cron
 					$aRunTasks[] = $sTaskClass;
 
 					// N°3219 for each process will use a specific CMDBChange object with a specific track info
-					// Any BackgroundProcess can overrides this as needed
+					// Any BackgroundProcess can override this as needed
 					CMDBObject::SetCurrentChangeFromParams("Background task ($sTaskClass)");
 
 					// Run the task and record its next run time
@@ -301,7 +306,7 @@ class Cron
 	 * @throws \ReflectionException
 	 * @throws \Exception
 	 */
-	protected function RunTask(BackgroundTask $oTask, $iTimeLimit)
+	protected function RunTask(BackgroundTask $oTask, int $iTimeLimit): string
 	{
 		$TaskClass = $oTask->Get('class_name');
 		$oProcess = new $TaskClass;
@@ -349,7 +354,7 @@ class Cron
 		catch (ProcessFatalException $e) {
 			$oExceptionToThrow = $e;
 		}
-		catch (Exception $e) // we shouldn't get so much exceptions... but we need to handle legacy code, and cron.php has to keep running
+		catch (Exception $e) // we shouldn't get so many exceptions... but we need to handle legacy code, and cron.php has to keep running
 		{
 			if ($oTask->IsDebug()) {
 				$sMessage = 'Processing failed with message: '.$e->getMessage().'. '.$e->getTraceAsString();
@@ -374,7 +379,7 @@ class Cron
 	}
 
 	/**
-	 * @param $oP
+	 * @param CLIPage|WebPage $oP
 	 * @param array $aTaskOrderBy
 	 *
 	 * @throws \ArchivedObjectException
@@ -383,7 +388,7 @@ class Cron
 	 * @throws \MySQLException
 	 * @throws \OQLException
 	 */
-	public static function DisplayStatus($oP, $aTaskOrderBy = [])
+	public static function DisplayStatus($oP, array $aTaskOrderBy = [])
 	{
 		$oSearch = new DBObjectSearch('BackgroundTask');
 		$oTasks = new DBObjectSet($oSearch, $aTaskOrderBy);
@@ -401,5 +406,27 @@ class Cron
 				$sLastRunDate, $sNextRunDate, $iNbRun, $sAverageRunTime));
 		}
 		$oP->p('+---------------------------+---------+---------------------+---------------------+--------+-----------+');
+	}
+
+	/**
+	 * @param $sTaskClass
+	 *
+	 * @return \iTopMutex
+	 */
+	protected function GetTaskMutex($sTaskClass): iTopMutex
+	{
+		return new iTopMutex("cron_$sTaskClass");
+	}
+
+	/**
+	 * @param $sTaskName
+	 *
+	 * @return bool
+	 * @throws \Exception
+	 */
+	protected function IsTaskRunning($sTaskName): bool
+	{
+		$oTaskMutex = $this->GetTaskMutex($sTaskName);
+		return $oTaskMutex->IsLocked();
 	}
 }
