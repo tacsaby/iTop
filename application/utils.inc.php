@@ -2692,6 +2692,9 @@ HTML;
 	}
 
 	/**
+	 * Get all classes implementing the given interface
+	 * Search within all the declared classes and also the autoloaded ones
+	 *
 	 * @param string $sInterface
 	 * @param string $sClassNameFilter
 	 * @param array $aExcludedPath Reg. exp. of the paths to exclude. Note that backslashes (typically for Windows env.) need to be 4 backslashes, 2 for the escaping backslash, 2 for the actual backslash 😅

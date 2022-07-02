@@ -1,4 +1,7 @@
 <?php
+
+use Combodo\iTop\Service\Cron;
+
 function DisplayStatus(WebPage $oPage)
 {
 	$oPage->set_title(Dict::S('iTopHub:Landing:Status'));
@@ -275,7 +278,7 @@ CSS
 
 	switch ($sOperation) {
 		case 'done':
-			DisplayStatus($oPage);
+			Cron::DisplayStatus($oPage);
 			break;
 
 		case 'install':

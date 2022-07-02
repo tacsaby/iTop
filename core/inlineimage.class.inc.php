@@ -691,6 +691,7 @@ class InlineImageGC implements iBackgroundProcess
 	 */
 	public function Process($iTimeLimit)
 	{
+		sleep(5);
 		$sDateLimit = date(AttributeDateTime::GetSQLFormat(), time()); // Every temporary InlineImage/Attachment expired will be deleted
 
 		$aResults = array();
