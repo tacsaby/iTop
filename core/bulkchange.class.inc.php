@@ -11,7 +11,7 @@ define('UTF8_BOM', chr(239).chr(187).chr(191)); // 0xEF, 0xBB, 0xBF
 
 /**
  * CellChangeSpec
- * A series of classes, keeping the information about a given cell: could it be changed or not (and why)?  
+ * A series of classes, keeping the information about a given cell: could it be changed or not (and why)?
  *
  * @package     iTopORM
  */
@@ -144,7 +144,7 @@ class CellStatus_Ambiguous extends CellStatus_Issue
 
 /**
  * RowStatus
- * A series of classes, keeping the information about a given row: could it be changed or not (and why)?  
+ * A series of classes, keeping the information about a given row: could it be changed or not (and why)?
  *
  * @package     iTopORM
  */
@@ -211,6 +211,20 @@ class RowStatus_Issue extends RowStatus
 	}
 }
 
+class RowStatus_Error extends RowStatus
+{
+	protected $m_sError;
+
+	public function __construct($sError)
+	{
+		$this->m_sError = $sError;
+	}
+
+	public function GetDescription()
+	{
+		return $this->m_sError;
+	}
+}
 
 /**
  * BulkChange
@@ -220,7 +234,7 @@ class RowStatus_Issue extends RowStatus
  */
 class BulkChange
 {
-	protected $m_sClass; 
+	protected $m_sClass;
 	protected $m_aData; // Note: hereafter, iCol maybe actually be any acceptable key (string)
 	// #@# todo: rename the variables to sColIndex
 	protected $m_aAttList; // attcode => iCol
@@ -261,7 +275,7 @@ class BulkChange
 		$this->m_sReportCsvSep = $sSeparator;
 		$this->m_sReportCsvDelimiter = $sDelimiter;
 	}
-   
+
 	protected function ResolveExternalKey($aRowData, $sAttCode, &$aResults)
 	{
 		$oExtKey = MetaModel::GetAttributeDef($this->m_sClass, $sAttCode);
@@ -318,7 +332,7 @@ class BulkChange
 	{
 		$aResults = array();
 		$aErrors = array();
-	
+
 		// External keys reconciliation
 		//
 		foreach($this->m_aExtKeys as $sAttCode => $aKeyConfig)
@@ -408,12 +422,12 @@ class BulkChange
 					$aErrors[$sAttCode] = Dict::S('UI:CSVReport-Value-Issue-NotFound');
 					$aResults[$sAttCode]= new CellStatus_SearchIssue();
 					break;
-					
+
 					case 1:
 					// Do change the external key attribute
 					$oTargetObj->Set($sAttCode, $iForeignKey);
 					break;
-					
+
 					default:
 					$aErrors[$sAttCode] = Dict::Format('UI:CSVReport-Value-Issue-FoundMany', $iCount);
 					$aResults[$sAttCode]= new CellStatus_Ambiguous($oTargetObj->Get($sAttCode), $iCount, $sOQL);
@@ -446,7 +460,7 @@ class BulkChange
 				}
 			}
 		}
-	
+
 		// Set the object attributes
 		//
 		foreach ($this->m_aAttList as $sAttCode => $iCol)
@@ -510,7 +524,7 @@ class BulkChange
 				}
 			}
 		}
-	
+
 		// Reporting on fields
 		//
 		$aChangedFields = $oTargetObj->ListChanges();
@@ -562,7 +576,7 @@ class BulkChange
 				}
 			}
 		}
-	
+
 		// Checks
 		//
 		$res = $oTargetObj->CheckConsistency();
@@ -573,12 +587,12 @@ class BulkChange
 		}
 		return $aResults;
 	}
-	
+
 	protected function PrepareMissingObject(&$oTargetObj, &$aErrors)
 	{
 		$aResults = array();
 		$aErrors = array();
-	
+
 		// External keys
 		//
 		foreach($this->m_aExtKeys as $sAttCode => $aKeyConfig)
@@ -591,7 +605,7 @@ class BulkChange
 				$aResults[$iCol] = new CellStatus_Void('?');
 			}
 		}
-	
+
 		// Update attributes
 		//
 		foreach($this->m_aOnDisappear as $sAttCode => $value)
@@ -602,7 +616,7 @@ class BulkChange
 			}
 			$oTargetObj->Set($sAttCode, $value);
 		}
-	
+
 		// Reporting on fields
 		//
 		$aChangedFields = $oTargetObj->ListChanges();
@@ -622,7 +636,7 @@ class BulkChange
 				$aResults[$iCol]= new CellStatus_Void($oTargetObj->Get($sAttCode));
 			}
 		}
-	
+
 		// Checks
 		//
 		$res = $oTargetObj->CheckConsistency();
@@ -680,14 +694,14 @@ class BulkChange
 		}
 
 		$aResult[$iRow] = $this->PrepareObject($oTargetObj, $aRowData, $aErrors);
-	
+
 		if (count($aErrors) > 0)
 		{
 			$sErrors = implode(', ', $aErrors);
 			$aResult[$iRow]["__STATUS__"] = new RowStatus_Issue(Dict::S('UI:CSVReport-Row-Issue-Attribute'));
 			return $oTargetObj;
 		}
-	
+
 		// Check that any external key will have a value proposed
 		$aMissingKeys = array();
 		foreach (MetaModel::GetExternalKeys($this->m_sClass) as $sExtKeyAttCode => $oExtKey)
@@ -695,7 +709,7 @@ class BulkChange
 			if (!$oExtKey->IsNullAllowed())
 			{
 				if (!array_key_exists($sExtKeyAttCode, $this->m_aExtKeys) && !array_key_exists($sExtKeyAttCode, $this->m_aAttList))
-				{ 
+				{
 					$aMissingKeys[] = $oExtKey->GetLabel();
 				}
 			}
@@ -751,14 +765,15 @@ class BulkChange
 		{
 			$sErrors = implode(', ', $aErrors);
 			$aResult[$iRow]["__STATUS__"] = new RowStatus_Issue(Dict::S('UI:CSVReport-Row-Issue-Attribute'));
+			$aResult[$iRow]["__ERRORS__"] = new RowStatus_Error($sErrors);
 			return;
 		}
-	
+
 		$aChangedFields = $oTargetObj->ListChanges();
 		if (count($aChangedFields) > 0)
 		{
 			$aResult[$iRow]["__STATUS__"] = new RowStatus_Modify(count($aChangedFields));
-	
+
 			// Optionaly record the results
 			//
 			if ($oChange)
@@ -802,7 +817,7 @@ class BulkChange
 			$aResult[$iRow]["__STATUS__"] = new RowStatus_Issue(Dict::S('UI:CSVReport-Row-Issue-Attribute'));
 			return;
 		}
-	
+
 		$aChangedFields = $oTargetObj->ListChanges();
 		if (count($aChangedFields) > 0)
 		{
@@ -827,7 +842,7 @@ class BulkChange
 			$aResult[$iRow]["__STATUS__"] = new RowStatus_Disappeared(0);
 		}
 	}
-	
+
 	public function Process(CMDBChange $oChange = null)
 	{
 		if ($oChange)
@@ -872,7 +887,7 @@ class BulkChange
 			foreach ($this->m_aAttList as $sAttCode => $iCol)
 			{
 				if ($sAttCode == 'id') continue;
-				
+
 				$oAttDef = MetaModel::GetAttributeDef($this->m_sClass, $sAttCode);
 				if ($oAttDef instanceof AttributeDateTime) // AttributeDate is derived from AttributeDateTime
 				{
@@ -959,22 +974,22 @@ class BulkChange
 						{
 							// The value has to be found or verified
 							list($sQuery, $aMatches) = $this->ResolveExternalKey($aRowData, $sAttCode, $aResult[$iRow]);
-		
+
 							if (count($aMatches) == 1)
 							{
 								$oRemoteObj = reset($aMatches); // first item
 								$valuecondition = $oRemoteObj->GetKey();
 								$aResult[$iRow][$sAttCode] = new CellStatus_Void($oRemoteObj->GetKey());
-							} 					
+							}
 							elseif (count($aMatches) == 0)
 							{
 								$aResult[$iRow][$sAttCode] = new CellStatus_SearchIssue();
-							} 					
+							}
 							else
 							{
 								$aResult[$iRow][$sAttCode] = new CellStatus_Ambiguous(null, count($aMatches), $sQuery);
 							}
-						} 					
+						}
 					}
 					else
 					{
@@ -1116,7 +1131,7 @@ class BulkChange
 			}
 		}
 		$oBulkChanges->Seek(0);
-	
+
 		$aDetails = array();
 		while ($oChange = $oBulkChanges->Fetch())
 		{
@@ -1280,7 +1295,7 @@ EOF
 							$oOldTarget = MetaModel::GetObject($oAttDef->GetTargetClass(), $oOperation->Get('oldvalue'));
 							$sOldValue = $oOldTarget->GetHyperlink();
 						}
-						
+
 						$sNewValue = Dict::S('UI:UndefinedObject');
 						if ($oOperation->Get('newvalue') != 0)
 						{
@@ -1306,11 +1321,11 @@ EOF
 				}
 				else
 				{
-					$aAttributes[$sAttCode] = 1;				
+					$aAttributes[$sAttCode] = 1;
 				}
 			}
 		}
-		
+
 		$aDetails = array();
 		foreach($aObjects as $iUId => $aObjData)
 		{
@@ -1362,6 +1377,6 @@ EOF
 			$aConfig[$sAttCode] = array('label' => MetaModel::GetLabel($sClass, $sAttCode), 'description' => MetaModel::GetDescription($sClass, $sAttCode));
 		}
 		$oPage->table($aConfig, $aDetails);
-	}	
+	}
 }
 

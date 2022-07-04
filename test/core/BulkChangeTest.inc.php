@@ -105,7 +105,7 @@ class BulkChangeTest extends ItopDataTestCase {
 				//$this->debug("sStatus:".$sStatus->GetDescription());
 				$this->assertEquals($sStatus->GetDescription(), $aResult["__STATUS__"]);
 				foreach ($aRow as $i => $oCell) {
-					if ($i != "finalclass" && $i != "__STATUS__") {
+					if ($i != "finalclass" && $i != "__STATUS__" && $i != "__ERRORS__") {
 						$this->debug("i:".$i);
 						$this->debug('GetDisplayableValue:'.$oCell->GetDisplayableValue());
 						$this->debug("aResult:".$aResult[$i]);
@@ -151,7 +151,16 @@ class BulkChangeTest extends ItopDataTestCase {
 				["name" => 1, "id" => 2, "status" => 3, "purchase_date" => 4],
 				["org_id" => ["name" => 0]],
 				["id"],
-				[0 => "Demo", "org_id" => "3", 1 => "Server1", 2 => "1", 3 => "&lt;svg onclick&quot;alert(1)&quot;&gt;", 4 => "", "id" => 1, "__STATUS__" => "Issue: Unexpected attribute value(s)"],
+				[
+					0 => "Demo",
+					"org_id" => "3",
+					1 => "Server1",
+					2 => "1",
+					3 => "&lt;svg onclick&quot;alert(1)&quot;&gt;",
+					4 => "",
+					"id" => 1,
+					"__STATUS__" => "Issue: Unexpected attribute value(s)",
+					"__ERRORS__" => "Unexpected value for attribute 'status': no match found, check spelling"],
 			],
 		];
 	}
@@ -208,11 +217,14 @@ class BulkChangeTest extends ItopDataTestCase {
 				$this->debug("sStatus:".$sStatus->GetDescription());
 				$this->assertEquals($sStatus->GetDescription(), $aResult["__STATUS__"]);
 				foreach ($aRow as $i => $oCell) {
-					if ($i != "finalclass" && $i != "__STATUS__") {
+					if ($i != "finalclass" && $i != "__STATUS__" && $i != "__ERRORS__") {
 						$this->debug("i:".$i);
 						$this->debug('GetDisplayableValue:'.$oCell->GetDisplayableValue());
 						$this->debug("aResult:".$aResult[$i]);
 						$this->assertEquals( $aResult[$i], $oCell->GetDisplayableValue());
+					} else if ($i === "__ERRORS__") {
+						$sErrors = array_key_exists("__ERRORS__", $aResult) ? $aResult["__ERRORS__"] : "";
+						$this->assertEquals( $sErrors, $oCell->GetDescription());
 					}
 				}
 				$this->assertEquals( $aResult[0], $aRow[0]->GetDisplayableValue());
@@ -230,7 +242,17 @@ class BulkChangeTest extends ItopDataTestCase {
 				["name" => 1, "id" => 2, "status" => 3, "purchase_date" => 4],
 				["org_id" => ["name" => 0]],
 				["id"],
-				[0 => "Demo", "org_id" => "3", 1 => "ServerTest", 2 => "1", 3 => "BadValue", 4 => "", "id" => 1, "__STATUS__" => "Issue: Unexpected attribute value(s)"],
+				[
+					0 => "Demo",
+					"org_id" => "3",
+					1 => "ServerTest",
+					2 => "1",
+					3 => "BadValue",
+					4 => "",
+					"id" => 1,
+					"__STATUS__" => "Issue: Unexpected attribute value(s)",
+					"__ERRORS__" => "Unexpected value for attribute 'status': no match found among: 'implementation,obsolete,production,stock'",
+				],
 			],
 			"Case 6 - 2 : Unexpected value" => [
 				["1", "ServerTest", "production", ""],
@@ -238,7 +260,17 @@ class BulkChangeTest extends ItopDataTestCase {
 				["name" => 1, "id" => 2, "status" => 3, "purchase_date" => 4],
 				["org_id" => ["name" => 0]],
 				["id"],
-				[0 => "Demo", "org_id" => "3", 1 => "ServerTest", 2 => "1", 3 => "&lt;svg onclick&quot;alert(1)&quot;&gt;", 4 => "", "id" => 1, "__STATUS__" => "Issue: Unexpected attribute value(s)"],
+				[
+					0 => "Demo",
+					"org_id" => "3",
+					1 => "ServerTest",
+					2 => "1",
+					3 => "&lt;svg onclick&quot;alert(1)&quot;&gt;",
+					4 => "",
+					"id" => 1,
+					"__STATUS__" => "Issue: Unexpected attribute value(s)",
+					"__ERRORS__" => "Unexpected value for attribute 'status': no match found among: 'implementation,obsolete,production,stock'",
+				],
 			],
 			"Case 8  : unchanged name" => [
 				["1", "<svg onclick\"alert(1)\">", "production", ""],
@@ -278,7 +310,9 @@ class BulkChangeTest extends ItopDataTestCase {
 				["name" => 1, "id" => 2, "status" => 3, "purchase_date" => 4],
 				["org_id" => ["name" => 0]],
 				["id"],
-				[ 0 => "Bad", "org_id" => "",1 => "ServerTest",2 => "1", 3 => "production", 4 => "", "id" => 1, "__STATUS__" => "Issue: Unexpected attribute value(s)"],
+				[ 0 => "Bad", "org_id" => "",1 => "ServerTest",2 => "1", 3 => "production", 4 => "", "id" => 1, "__STATUS__" => "Issue: Unexpected attribute value(s)",
+					"__ERRORS__" => "Object not found",
+				],
 			],
 			"Case 1 - 2 : no match" => [
 				["1", "ServerTest", "production", ""],
@@ -286,7 +320,9 @@ class BulkChangeTest extends ItopDataTestCase {
 				["name" => 1, "id" => 2, "status" => 3, "purchase_date" => 4],
 				["org_id" => ["name" => 0]],
 				["id"],
-				[ 0 => "&lt;svg fonclick&quot;alert(1)&quot;&gt;", "org_id" => "",1 => "ServerTest",2 => "1", 3 => "production", 4 => "", "id" => 1, "__STATUS__" => "Issue: Unexpected attribute value(s)"],
+				[ 0 => "&lt;svg fonclick&quot;alert(1)&quot;&gt;", "org_id" => "",1 => "ServerTest",2 => "1", 3 => "production", 4 => "", "id" => 1, "__STATUS__" => "Issue: Unexpected attribute value(s)",
+					"__ERRORS__" => "Object not found",
+				],
 			],
 			"Case 10 : Missing mandatory value" => [
 				["1", "ServerTest", "production", ""],
@@ -294,7 +330,9 @@ class BulkChangeTest extends ItopDataTestCase {
 				["name" => 1, "id" => 2, "status" => 3, "purchase_date" => 4],
 				["org_id" => ["name" => 0]],
 				["id"],
-				[ 0 => "",  "org_id" => "", 1 => "ServerTest", 2 => "1", 3 => "production", 4 => "", "id" => 1, "__STATUS__" => "Issue: Unexpected attribute value(s)"],
+				[ 0 => "",  "org_id" => "", 1 => "ServerTest", 2 => "1", 3 => "production", 4 => "", "id" => 1, "__STATUS__" => "Issue: Unexpected attribute value(s)",
+					"__ERRORS__" => "Null not allowed",
+				],
 			],
 
 			"Case 0 : Date format" => [
@@ -355,15 +393,17 @@ class BulkChangeTest extends ItopDataTestCase {
 		static::assertNotNull($aRes);
 		foreach ($aRes as $aRow) {
 			foreach ($aRow as $i => $oCell) {
-				if ($i != "finalclass" && $i != "__STATUS__") {
+				if ($i != "finalclass" && $i != "__STATUS__" && $i != "__ERRORS__") {
 					$this->debug("i:".$i);
 					$this->debug('GetDisplayableValue:'.$oCell->GetDisplayableValue());
 					$this->debug("aResult:".$aResult[$i]);
 					$this->assertEquals($aResult[$i], $oCell->GetDisplayableValue());
-				}
-				elseif ($i == "__STATUS__") {
+				} elseif ($i == "__STATUS__") {
 					$sStatus = $aRow['__STATUS__'];
 					$this->assertEquals($aResult["__STATUS__"], $sStatus->GetDescription());
+				} else if ($i === "__ERRORS__") {
+					$sErrors = array_key_exists("__ERRORS__", $aResult) ? $aResult["__ERRORS__"] : "";
+					$this->assertEquals( $sErrors, $oCell->GetDescription());
 				}
 			}
 			$this->assertEquals($aResult[0], $aRow[0]->GetDisplayableValue());
