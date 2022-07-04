@@ -647,6 +647,7 @@ Nous espérons que vous aimerez cette version autant que nous avons eu du plaisi
 	'UI:CSVReport-Value-Issue-Readonly' => 'L\'attribut \'%1$s\' est en lecture seule (valeur courante: %2$s, valeur proposée: %3$s)',
 	'UI:CSVReport-Value-Issue-Format' => 'Echec de traitement de la valeur: %1$s',
 	'UI:CSVReport-Value-Issue-NoMatch' => 'Valeur incorrecte pour \'%1$s\': pas de correspondance, veuillez vérifier la syntaxe',
+	'UI:CSVReport-Value-Issue-NoMatch-Among' => 'Unexpected value for attribute \'%1$s\': no match found among: \'%2$s\'',
 	'UI:CSVReport-Value-Issue-Unknown' => 'Valeur incorrecte pour \'%1$s\': %2$s',
 	'UI:CSVReport-Row-Issue-Inconsistent' => 'Incohérence entre attributs: %1$s',
 	'UI:CSVReport-Row-Issue-Attribute' => 'Des attributs ont des valeurs incorrectes',

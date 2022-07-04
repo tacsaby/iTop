@@ -664,6 +664,7 @@ We hope you’ll enjoy this version as much as we enjoyed imagining and creating
 	'UI:CSVReport-Value-Issue-Readonly' => 'The attribute \'%1$s\' is read-only and cannot be modified (current value: %2$s, proposed value: %3$s)',
 	'UI:CSVReport-Value-Issue-Format' => 'Failed to process input: %1$s',
 	'UI:CSVReport-Value-Issue-NoMatch' => 'Unexpected value for attribute \'%1$s\': no match found, check spelling',
+	'UI:CSVReport-Value-Issue-NoMatch-Among' => 'Unexpected value for attribute \'%1$s\': no match found among: \'%2$s\'',
 	'UI:CSVReport-Value-Issue-Unknown' => 'Unexpected value for attribute \'%1$s\': %2$s',
 	'UI:CSVReport-Row-Issue-Inconsistent' => 'Attributes not consistent with each others: %1$s',
 	'UI:CSVReport-Row-Issue-Attribute' => 'Unexpected attribute value(s)',

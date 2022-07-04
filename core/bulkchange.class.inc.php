@@ -487,7 +487,13 @@ class BulkChange
 				$value = $oAttDef->MakeValueFromString($aRowData[$iCol], $this->m_bLocalizedValues);
 				if (is_null($value) && (strlen($aRowData[$iCol]) > 0))
 				{
-					$aErrors[$sAttCode] = Dict::Format('UI:CSVReport-Value-Issue-NoMatch', $sAttCode);
+					if ($oAttDef instanceof AttributeEnum || $oAttDef instanceof AttributeTagSet){
+						/** @var AttributeEnum $oAttEnumDef */
+						$oAttEnumDef = $oAttDef;
+						$aErrors[$sAttCode] = Dict::Format('UI:CSVReport-Value-Issue-NoMatch-Among', $sAttCode, implode(',', $oAttEnumDef->GetAllowedValues()));
+					} else {
+						$aErrors[$sAttCode] = Dict::Format('UI:CSVReport-Value-Issue-NoMatch', $sAttCode);
+					}
 				}
 				else
 				{
