@@ -139,7 +139,7 @@ try {
 		}
 		return $aResult;
 	}
-	
+
 	/**
 	 * Return the most frequent (and regularly occuring) character among the given set, in the specified lines
 	 * @param array $aCSVData The input data, one entry per line
@@ -175,7 +175,7 @@ try {
 			}
 			$iLine++;
 		}
-		
+
 		$aScores = array();
 		foreach($aGuesses as $sSep => $aData)
 		{
@@ -186,7 +186,7 @@ try {
 		$sSeparator = $aKeys[0]; // Take the first key, the one with the best score
 		return $sSeparator;
 	}
-	
+
 	/**
 	 * Try to predict the CSV parameters based on the input data
 	 * @param string $sCSVData The input data
@@ -197,10 +197,10 @@ try {
 		$aData = explode("\n", $sCSVData);
 		$sSeparator = GuessFromFrequency($aData, array("\t", ',', ';', '|')); // Guess the most frequent (and regular) character on each line
 		$sQualifier = GuessFromFrequency($aData, array('"', "'")); // Guess the most frequent (and regular) character on each line
-		
+
 		return array('separator' => $sSeparator, 'qualifier' => $sQualifier);
 	}
-	
+
 	/**
 	 * Display a banner for the special "synchro" mode
 	 * @param WebPage $oP The Page for the output
@@ -255,9 +255,9 @@ try {
 		$sSynchroScope = utils::ReadParam('synchro_scope', '', false, 'raw_data');
 		$sDateTimeFormat = utils::ReadParam('date_time_format', 'default');
 		$sCustomDateTimeFormat = utils::ReadParam('custom_date_time_format', (string)AttributeDateTime::GetFormat(), false, 'raw_data');
-		
+
 		$sChosenDateFormat = ($sDateTimeFormat == 'default') ? (string)AttributeDateTime::GetFormat() : $sCustomDateTimeFormat;
-		
+
 		if (!empty($sSynchroScope))
 		{
 			$oSearch = DBObjectSearch::FromOQL($sSynchroScope);
@@ -272,7 +272,7 @@ try {
 			$sSynchroScope  = '';
 			$aSynchroUpdate = null;
 		}
-				
+
 		// Parse the data set
 		$oCSVParser = new CSVParser($sCSVData, $sSeparator, $sTextQualifier, MetaModel::GetConfig()->Get('max_execution_time_per_loop'));
 		$aData = $oCSVParser->ToArray($iSkippedLines);
@@ -282,10 +282,10 @@ try {
 			$aResult[] = $sTextQualifier.implode($sTextQualifier.$sSeparator.$sTextQualifier, array_shift($aData)).$sTextQualifier; // Remove the first line and store it in case of error
 			$iRealSkippedLines++;
 		}
-	
+
 		// Format for the line numbers
 		$sMaxLen = (strlen(''.count($aData)) < 3) ? 3 : strlen(''.count($aData)); // Pad line numbers to the appropriate number of chars, but at least 3
-	
+
 		// Compute the list of search/reconciliation criteria
 		$aSearchKeys = array();
 		foreach($aSearchFields as $index => $sDummy)
@@ -299,16 +299,16 @@ try {
 			}
 			else
 			{
-				$aSearchKeys[$sSearchField] = '';			
+				$aSearchKeys[$sSearchField] = '';
 			}
 			if (!MetaModel::IsValidFilterCode($sClassName, $sSearchField))
 			{
 				// Remove invalid or unmapped search fields
 				$aSearchFields[$index] = null;
-				unset($aSearchKeys[$sSearchField]);			
+				unset($aSearchKeys[$sSearchField]);
 			}
 		}
-		
+
 		// Compute the list of fields and external keys to process
 		$aExtKeys = array();
 		$aAttributes = array();
@@ -341,13 +341,13 @@ try {
 						}
 						else
 						{
-							$aAttributes[$sAttCode] = $iIndex;				
+							$aAttributes[$sAttCode] = $iIndex;
 						}
 					}
 				}
-			}		
+			}
 		}
-		
+
 		$oMyChange = null;
 		if (!$bSimulate)
 		{
@@ -358,7 +358,7 @@ try {
 			$oMyChange = CMDBObject::GetCurrentChange();
 		}
 		CMDBObject::SetTrackOrigin('csv-interactive');
-	
+
 		$oBulk = new BulkChange(
 			$sClassName,
 			$aData,
@@ -368,7 +368,7 @@ try {
 			empty($sSynchroScope) ? null : $sSynchroScope,
 			$aSynchroUpdate,
 			$sChosenDateFormat, // date format
-			true // localize		
+			true // localize
 		);
 		$oBulk->SetReportHtml();
 
@@ -493,7 +493,7 @@ try {
 
 						case 'CellStatus_SearchIssue':
 							$sCellMessage .= GetDivAlert($oCellStatus->GetDescription());
-							$aTableRow[$sClassName.'/'.$sAttCode] = '<div class="ibo-csv-import--cell-error">ERROR: '.$sHtmlValue.$sCellMessage.'</div>';
+							$aTableRow[$sClassName.'/'.$sAttCode] = '<div class="ibo-csv-import--cell-error">'.Dict::Format('UI:CSVReport-Object-Error', $sHtmlValue).$sCellMessage.'</div>';
 							break;
 
 						case 'CellStatus_Ambiguous':
@@ -673,7 +673,7 @@ try {
 EOF
 			);
 		}
-		
+
 		$sErrors = json_encode(Dict::Format('UI:CSVImportError_items', $iErrors));
 		$sCreated = json_encode(Dict::Format('UI:CSVImportCreated_items', $iCreated));
 		$sModified = json_encode(Dict::Format('UI:CSVImportModified_items', $iModified));
@@ -682,7 +682,7 @@ EOF
 		// Add graphs dependencies
 		WebResourcesHelper::EnableC3JSToWebPage($oPage);
 
-		$oPage->add_script(		
+		$oPage->add_script(
 <<< EOF
 function CSVGoBack()
 {
@@ -768,7 +768,7 @@ EOF
 		{
 			return null;
 		}
-	
+
 	}
 	/**
 	 * Perform the actual load of the CSV data and display the results
@@ -792,7 +792,7 @@ EOF
 			$oField->AddSubBlock($oText);
 		}
 	}
-	
+
 	/**
 	 * Simulate the load of the CSV data and display the results
 	 * @param WebPage $oPage The web page to display the wizard
@@ -804,7 +804,7 @@ EOF
 		$oPage->AddSubBlock($oPanel);
 		ProcessCSVData($oPage, true /* simulate */);
 	}
-	
+
 	/**
 	 * Select the mapping between the CSV column and the fields of the objects
 	 * @param WebPage $oPage The web page to display the wizard
@@ -917,10 +917,10 @@ EOF
 			$aSearchFields = utils::ReadParam('search_field', array(), false, 'field_name');
 			$sFieldsMapping = addslashes(json_encode($aFieldsMapping));
 			$sSearchFields = addslashes(json_encode($aSearchFields));
-		
+
 			$oPage->add_ready_script("DoMapping('$sFieldsMapping', '$sSearchFields');"); // There is already a class selected, run the mapping
 		}
-	
+
 		$oPage->add_script(
 <<<EOF
 	var aDefaultKeys = new Array();
@@ -1136,7 +1136,7 @@ EOF
 EOF
 	);
 	}
-	
+
 	/**
 	 * Select the options of the CSV load and check for CSV parsing errors
 	 * @param WebPage $oPage The current web page
@@ -1160,7 +1160,7 @@ EOF
 			$sCSVData = utils::ReadPostedParam('csvdata', '', 'raw_data');
 		}
 		$sEncoding = utils::ReadParam('encoding', 'UTF-8');
-	
+
 		// Compute a subset of the data set, now that we know the charset
 		if ($sEncoding == 'UTF-8')
 		{
@@ -1177,15 +1177,15 @@ EOF
 		{
 			$sUTF8Data = iconv($sEncoding, 'UTF-8//IGNORE//TRANSLIT', $sCSVData);
 		}
-	
+
 		$aGuesses = GuessParameters($sUTF8Data); // Try to predict the parameters, based on the input data
-		
+
 		$iSkippedLines = utils::ReadParam('nb_skipped_lines', '');
 		$bBoxSkipLines = utils::ReadParam('box_skiplines', 0);
 		$sTextQualifier = utils::ReadParam('text_qualifier', '', false, 'raw_data');
 		if ($sTextQualifier == '') // May be set to an empty value by the previous page
 		{
-			$sTextQualifier = $aGuesses['qualifier'];	
+			$sTextQualifier = $aGuesses['qualifier'];
 		}
 		$sOtherTextQualifier = in_array($sTextQualifier, array('"', "'")) ? '' : $sTextQualifier;
 		$bHeaderLine = utils::ReadParam('header_line', 0);
@@ -1605,7 +1605,7 @@ EOF
 				null, AjaxTab::ENUM_TAB_PLACEHOLDER_MISC);
 		}
 	}
-			
+
 	switch($iStep)
 	{
 		case 11:
@@ -1613,45 +1613,45 @@ EOF
 			$oPage = new AjaxPage('');
 			BulkChange::DisplayImportHistory($oPage);
 			$oPage->add_ready_script('$("#CSVImportHistory table.listResults").tableHover();');
-			$oPage->add_ready_script('$("#CSVImportHistory table.listResults").tablesorter( { widgets: ["myZebra", "truncatedList"]} );');	
+			$oPage->add_ready_script('$("#CSVImportHistory table.listResults").tablesorter( { widgets: ["myZebra", "truncatedList"]} );');
 			break;
-		
+
 		case 10:
 			// Case generated by BulkChange::DisplayImportHistory
 			$iChange = (int)utils::ReadParam('changeid', 0);
 			BulkChange::DisplayImportHistoryDetails($oPage, $iChange);
 			break;
-			
+
 		case 5:
 			LoadData($oPage);
 			break;
-			
+
 		case 4:
 			Preview($oPage);
 			break;
-			
+
 		case 3:
 			SelectMapping($oPage);
 			break;
-			
+
 		case 2:
 			SelectOptions($oPage);
 			break;
-			
+
 		case 1:
 		case 6: // Loop back here when we are done
 		default:
 			Welcome($oPage);
 	}
-	
+
 	$oPage->output();
 }
 catch(CoreException $e)
 {
 	require_once(APPROOT.'/setup/setuppage.class.inc.php');
 	$oP = new ErrorPage(Dict::S('UI:PageTitle:FatalError'));
-	$oP->add("<h1>".Dict::S('UI:FatalErrorMessage')."</h1>\n");	
-	$oP->error(Dict::Format('UI:Error_Details', $e->getHtmlDesc()));	
+	$oP->add("<h1>".Dict::S('UI:FatalErrorMessage')."</h1>\n");
+	$oP->error(Dict::Format('UI:Error_Details', $e->getHtmlDesc()));
 	$oP->output();
 
 	if (MetaModel::IsLogEnabledIssue())
@@ -1679,8 +1679,8 @@ catch(Exception $e)
 {
 	require_once(APPROOT.'/setup/setuppage.class.inc.php');
 	$oP = new ErrorPage(Dict::S('UI:PageTitle:FatalError'));
-	$oP->add("<h1>".Dict::S('UI:FatalErrorMessage')."</h1>\n");	
-	$oP->error(Dict::Format('UI:Error_Details', $e->getMessage()));	
+	$oP->add("<h1>".Dict::S('UI:FatalErrorMessage')."</h1>\n");
+	$oP->error(Dict::Format('UI:Error_Details', $e->getMessage()));
 	$oP->output();
 
 	if (MetaModel::IsLogEnabledIssue())
