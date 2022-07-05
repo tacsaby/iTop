@@ -103,7 +103,7 @@ class BulkChangeTest extends ItopDataTestCase {
 			if (array_key_exists('__STATUS__', $aRow)) {
 				$sStatus = $aRow['__STATUS__'];
 				//$this->debug("sStatus:".$sStatus->GetDescription());
-				$this->assertEquals($sStatus->GetDescription(), $aResult["__STATUS__"]);
+				$this->assertEquals($aResult["__STATUS__"], $sStatus->GetDescription());
 				foreach ($aRow as $i => $oCell) {
 					if ($i != "finalclass" && $i != "__STATUS__" && $i != "__ERRORS__") {
 						$this->debug("i:".$i);
@@ -180,17 +180,20 @@ class BulkChangeTest extends ItopDataTestCase {
 		//change value during the test
 		$db_core_transactions_enabled=MetaModel::GetConfig()->Get('db_core_transactions_enabled');
 		MetaModel::GetConfig()->Set('db_core_transactions_enabled',false);
-		/** @var Server $oServer */
-		$oServer = $this->createObject('Server', array(
-			'name' => $aInitData[1],
-			'status' => $aInitData[2],
-			'org_id' => $aInitData[0],
-			'purchase_date' => $aInitData[3],
-		));
-		$aCsvData[0][2]=$oServer->GetKey();
-		$aResult[2]=$oServer->GetKey();
-		$aResult["id"]=$oServer->GetKey();
-		$this->debug("oServer->GetKey():".$oServer->GetKey());
+
+		if (is_array($aInitData) && sizeof($aInitData) != 0) {
+			/** @var Server $oServer */
+			$oServer = $this->createObject('Server', array(
+				'name' => $aInitData[1],
+				'status' => $aInitData[2],
+				'org_id' => $aInitData[0],
+				'purchase_date' => $aInitData[3],
+			));
+			$aCsvData[0][2]=$oServer->GetKey();
+			$aResult[2]=$oServer->GetKey();
+			$aResult["id"]=$oServer->GetKey();
+			$this->debug("oServer->GetKey():".$oServer->GetKey());
+		}
 		$this->debug("aCsvData:".json_encode($aCsvData[0]));
 		$this->debug("aReconcilKeys:".$aReconcilKeys[0]);
 		$oBulk = new \BulkChange(
@@ -215,7 +218,7 @@ class BulkChangeTest extends ItopDataTestCase {
 			if (array_key_exists('__STATUS__', $aRow)) {
 				$sStatus = $aRow['__STATUS__'];
 				$this->debug("sStatus:".$sStatus->GetDescription());
-				$this->assertEquals($sStatus->GetDescription(), $aResult["__STATUS__"]);
+				$this->assertEquals($aResult["__STATUS__"], $sStatus->GetDescription());
 				foreach ($aRow as $i => $oCell) {
 					if ($i != "finalclass" && $i != "__STATUS__" && $i != "__ERRORS__") {
 						$this->debug("i:".$i);
@@ -236,7 +239,7 @@ class BulkChangeTest extends ItopDataTestCase {
 
 	public function CSVImportProvider() {
 		return [
-			"Case 6 - 1 : Unexpected value" => [
+			"Case 6 - 1 : Unexpected value (update)" => [
 				["1", "ServerTest", "production", ""],
 				[["Demo", "ServerTest", "key", "BadValue", ""]],
 				["name" => 1, "id" => 2, "status" => 3, "purchase_date" => 4],
@@ -254,7 +257,7 @@ class BulkChangeTest extends ItopDataTestCase {
 					"__ERRORS__" => "Unexpected value for attribute 'status': no match found among: 'implementation,obsolete,production,stock'",
 				],
 			],
-			"Case 6 - 2 : Unexpected value" => [
+			"Case 6 - 2 : Unexpected value (update)" => [
 				["1", "ServerTest", "production", ""],
 				[["Demo", "ServerTest", "key", "<svg onclick\"alert(1)\">", ""]],
 				["name" => 1, "id" => 2, "status" => 3, "purchase_date" => 4],
@@ -267,6 +270,23 @@ class BulkChangeTest extends ItopDataTestCase {
 					2 => "1",
 					3 => "&lt;svg onclick&quot;alert(1)&quot;&gt;",
 					4 => "",
+					"id" => 1,
+					"__STATUS__" => "Issue: Unexpected attribute value(s)",
+					"__ERRORS__" => "Unexpected value for attribute 'status': no match found among: 'implementation,obsolete,production,stock'",
+				],
+			],
+			"Case 6 - 3 : Unexpected value (creation)" => [
+				[],
+				[["Demo", "ServerTest", "<svg onclick\"alert(1)\">", ""]],
+				["name" => 1, "status" => 2, "purchase_date" => 3],
+				["org_id" => ["name" => 0]],
+				["name"],
+				[
+					0 => "Demo",
+					"org_id" => "3",
+					1 => "\"ServerTest\"",
+					2 => "&lt;svg onclick&quot;alert(1)&quot;&gt;",
+					3 => "",
 					"id" => 1,
 					"__STATUS__" => "Issue: Unexpected attribute value(s)",
 					"__ERRORS__" => "Unexpected value for attribute 'status': no match found among: 'implementation,obsolete,production,stock'",
@@ -363,20 +383,22 @@ class BulkChangeTest extends ItopDataTestCase {
 		//change value during the test
 		$db_core_transactions_enabled=MetaModel::GetConfig()->Get('db_core_transactions_enabled');
 		MetaModel::GetConfig()->Set('db_core_transactions_enabled',false);
-		/** @var Server $oServer */
-		$oOrganisation = $this->createObject('Organization', array(
-			'name' =>$aInitData[0]
-		));
-		$aResult["org_id"]=$oOrganisation->GetKey();
-		$oServer = $this->createObject('Server', array(
-			'name' => $aInitData[1],
-			'status' => $aInitData[2],
-			'org_id' => $oOrganisation->GetKey(),
-			'purchase_date' => $aInitData[3],
-		));
-		$aCsvData[0][2]=$oServer->GetKey();
-		$aResult[2]=$oServer->GetKey();
-		$aResult["id"]=$oServer->GetKey();
+		if (is_array($aInitData) && sizeof($aInitData) != 0) {
+			/** @var Server $oServer */
+			$oOrganisation = $this->createObject('Organization', array(
+				'name' => $aInitData[0]
+			));
+			$aResult["org_id"] = $oOrganisation->GetKey();
+			$oServer = $this->createObject('Server', array(
+				'name' => $aInitData[1],
+				'status' => $aInitData[2],
+				'org_id' => $oOrganisation->GetKey(),
+				'purchase_date' => $aInitData[3],
+			));
+			$aCsvData[0][2]=$oServer->GetKey();
+			$aResult[2]=$oServer->GetKey();
+			$aResult["id"]=$oServer->GetKey();
+		}
 		$oBulk = new \BulkChange(
 			"Server",
 			$aCsvData,
