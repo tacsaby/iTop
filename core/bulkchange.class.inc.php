@@ -86,13 +86,18 @@ class CellStatus_Issue extends CellStatus_Modify
 		parent::__construct($proposedValue, $previousValue);
 	}
 
-	public function GetDescription()
+	public function GetDisplayableValue()
 	{
 		if (is_null($this->m_proposedValue))
 		{
-			return Dict::Format('UI:CSVReport-Value-SetIssue', $this->m_sReason);
+			return Dict::Format('UI:CSVReport-Value-SetIssue');
 		}
-		return Dict::Format('UI:CSVReport-Value-ChangeIssue', $this->m_proposedValue, $this->m_sReason);
+		return Dict::Format('UI:CSVReport-Value-ChangeIssue', $this->m_proposedValue);
+	}
+
+	public function GetDescription()
+	{
+		return $this->m_sReason;
 	}
 }
 
@@ -501,10 +506,11 @@ class BulkChange
 				$value = $oAttDef->MakeValueFromString($aRowData[$iCol], $this->m_bLocalizedValues);
 				if (is_null($value) && (strlen($aRowData[$iCol]) > 0))
 				{
+					//N°595 - display allowed valued for UI ergonomy
 					if ($oAttDef instanceof AttributeEnum || $oAttDef instanceof AttributeTagSet){
 						/** @var AttributeEnum $oAttEnumDef */
 						$oAttEnumDef = $oAttDef;
-						$aErrors[$sAttCode] = Dict::Format('UI:CSVReport-Value-Issue-NoMatch-Among', $sAttCode, implode(',', $oAttEnumDef->GetAllowedValues()));
+						$aErrors[$sAttCode] = Dict::Format('UI:CSVReport-Value-Issue-AllowedValues', $sAttCode, implode(',', $oAttEnumDef->GetAllowedValues()));
 					} else {
 						$aErrors[$sAttCode] = Dict::Format('UI:CSVReport-Value-Issue-NoMatch', $sAttCode);
 					}
@@ -699,6 +705,7 @@ class BulkChange
 		{
 			$sErrors = implode(', ', $aErrors);
 			$aResult[$iRow]["__STATUS__"] = new RowStatus_Issue(Dict::S('UI:CSVReport-Row-Issue-Attribute'));
+			$aResult[$iRow]["__ERRORS__"] = new RowStatus_Error($sErrors);
 			return $oTargetObj;
 		}
 
@@ -815,6 +822,7 @@ class BulkChange
 		{
 			$sErrors = implode(', ', $aErrors);
 			$aResult[$iRow]["__STATUS__"] = new RowStatus_Issue(Dict::S('UI:CSVReport-Row-Issue-Attribute'));
+			$aResult[$iRow]["__ERRORS__"] = new RowStatus_Error($sErrors);
 			return;
 		}
 
@@ -902,14 +910,18 @@ class BulkChange
 								$sFormat = $sDateFormat;
 							}
 							$oFormat = new DateTimeFormat($sFormat);
+							$sDateExample = $oFormat->Format(new DateTime());
 							$sRegExp = $oFormat->ToRegExpr('/');
-							if (!preg_match($sRegExp, $this->m_aData[$iRow][$iCol]))
+							$sErrorMsg = Dict::Format('UI:CSVReport-Row-Issue-ExpectedDateFormat', $sDateExample);
+							if (!preg_match($sRegExp, $sValue))
 							{
 								$aResult[$iRow]["__STATUS__"]= new RowStatus_Issue(Dict::S('UI:CSVReport-Row-Issue-DateFormat'));
+								$aResult[$iRow][$iCol] = new CellStatus_Issue(utils::HtmlEntities($sValue), null, $sErrorMsg);
+
 							}
 							else
 							{
-								$oDate = DateTime::createFromFormat($sFormat, $this->m_aData[$iRow][$iCol]);
+								$oDate = DateTime::createFromFormat($sFormat, $sValue);
 								if ($oDate !== false)
 								{
 									$sNewDate = $oDate->format($oAttDef->GetInternalFormat());
@@ -919,7 +931,7 @@ class BulkChange
 								{
 									// Leave the cell unchanged
 									$aResult[$iRow]["__STATUS__"]= new RowStatus_Issue(Dict::S('UI:CSVReport-Row-Issue-DateFormat'));
-									$aResult[$iRow][$sAttCode] = new CellStatus_Issue(null, utils::HtmlEntities($this->m_aData[$iRow][$iCol]), Dict::S('UI:CSVReport-Row-Issue-DateFormat'));
+									$aResult[$iRow][$iCol] = new CellStatus_Issue(utils::HtmlEntities($sValue), null, $sErrorMsg);
 								}
 							}
 						}
