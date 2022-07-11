@@ -103,14 +103,35 @@ class CellStatus_Issue extends CellStatus_Modify
 
 class CellStatus_SearchIssue extends CellStatus_Issue
 {
-	public function __construct()
+	private $m_sAllowedValues;
+
+	//message principal
+	//message secondaire
+	//possible values
+	//link
+	public function __construct($sReason, $sAllowedValues=null)
 	{
-		parent::__construct(null, null, null);
+		parent::__construct(null, null, $sReason);
+		$this->m_sAllowedValues = $sAllowedValues;
+	}
+
+	public function GetDisplayableValue()
+	{
+		if (null == $this->m_sReason) {
+			return Dict::Format('UI:CSVReport-Value-NoMatch', '');
+		}
+
+		return $this->m_sReason;
 	}
 
 	public function GetDescription()
 	{
-		return Dict::S('UI:CSVReport-Value-NoMatch');
+		if (null === $this->m_sAllowedValues
+				|| '' === $this->m_sAllowedValues ) {
+			return '';
+		}
+
+		return Dict::Format('UI:CSVReport-Value-NoMatch-PossibleValues', $this->m_sAllowedValues);
 	}
 }
 
@@ -424,8 +445,73 @@ class BulkChange
 				switch($iCount)
 				{
 					case 0:
+						//current search with current permissions did not match
+						//let's search why and give some more feedbackst to the user
+
+						//count all objects with all permissions
+						$oReconFilter2 = new DBObjectSearch($oExtKey->GetTargetClass());
+						$oReconFilter2->AllowAllData(true);
+						$oExtObjectSet = new CMDBObjectSet($oReconFilter2);
+						$iAllowAllDataObjectCount = $oExtObjectSet->Count();
+
+						//count all objects with current user permissions
+						$oReconFilter2->AllowAllData(false);
+						$oExtObjectSetWithCurrentUserPermissions = new CMDBObjectSet($oReconFilter2);
+						$iCurrentUserRightsObjectCount = $oExtObjectSetWithCurrentUserPermissions->Count();
+
+						if ($iAllowAllDataObjectCount === 0) {
+							//no objects at all
+							$sReason = Dict::Format('UI:CSVReport-Value-NoMatch-NoObject', $value);
+							$aResults[$sAttCode]= new CellStatus_SearchIssue($sReason);
+
+							//search link for exhaustive values
+						} else {
+							if ($iCurrentUserRightsObjectCount === 0){
+								//no objects visible by current user
+								$sReason = Dict::Format('UI:CSVReport-Value-NoMatch-NoObject-ForCurrentUser', $value);
+								$aResults[$sAttCode]= new CellStatus_SearchIssue($sReason);
+
+								//search link for exhaustive values
+							} else {
+								try{
+									$allowedValues="";
+									for($i=0; $i<4; $i++){
+										/** @var \DBObject $oVisibleObject */
+										$oVisibleObject = $oExtObjectSetWithCurrentUserPermissions->Fetch();
+										if (is_null($oVisibleObject)){
+											break;
+										}
+
+										if ('' === $allowedValues){
+											$allowedValues = $oVisibleObject->GetName();
+										}
+										else {
+											$allowedValues .= ', ' . $oVisibleObject->GetName();
+										}
+									}
+
+								}catch(Exception $e){
+									IssueLog::Error("failure when fetching few visible objects: " . $e->getMessage());
+								}
+								if ($iAllowAllDataObjectCount != $iCurrentUserRightsObjectCount) {
+									//no match and some objects NOT visible by current user. including current search maybe...
+									$sReason = Dict::Format('UI:CSVReport-Value-NoMatch-SomeObjectNotVisibleForCurrentUser', $value);
+									$aResults[$sAttCode] = new CellStatus_SearchIssue($sReason, $allowedValues);
+
+									//possible values: DD,DD
+									//search link for exhaustive values
+								} else {
+									//no match. this is not linked to any right issue
+									//possible values: DD,DD
+									$sReason = Dict::Format('UI:CSVReport-Value-NoMatch', $value);
+									$aResults[$sAttCode] = new CellStatus_SearchIssue($sReason, $allowedValues);
+
+									//search link for exhaustive values
+								}
+							}
+						}
+
 					$aErrors[$sAttCode] = Dict::S('UI:CSVReport-Value-Issue-NotFound');
-					$aResults[$sAttCode]= new CellStatus_SearchIssue();
 					break;
 
 					case 1:

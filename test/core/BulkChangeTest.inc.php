@@ -109,7 +109,7 @@ class BulkChangeTest extends ItopDataTestCase {
 						$this->debug("i:".$i);
 						$this->debug('GetDisplayableValue:'.$oCell->GetDisplayableValue());
 						$this->debug("aResult:".$aResult[$i]);
-						$this->assertEquals($oCell->GetDisplayableValue(), $aResult[$i]);
+						$this->assertEquals($aResult[$i], $oCell->GetDisplayableValue());
 					}
 				}
 			}
@@ -130,21 +130,21 @@ class BulkChangeTest extends ItopDataTestCase {
 				["name" => 1, "id" => 2, "status" => 3, "purchase_date" => 4],
 				["org_id" => ["name" => 0]],
 				["id"],
-				[ 0 => "Demo", "org_id" => "n/a", 1 => "Server1", 2 => "1", 3 => "production", 4 => "date", "id" => 1, "__STATUS__" => "Issue: wrong date format"],
+				[ 0 => "Demo", "org_id" => "n/a", 1 => "Server1", 2 => "1", 3 => "production", 4 => "'date' is an invalid value", "id" => 1, "__STATUS__" => "Issue: wrong date format"],
 			],
 			"Case 1 : no match" => [
 				[["Bad", "Server1", "1", "production", ""]],
 				["name" => 1, "id" => 2, "status" => 3, "purchase_date" => 4],
 				["org_id" => ["name" => 0]],
 				["id"],
-				["org_id" => "",1 => "Server1",2 => "1", 3 => "production", 4 => "", "id" => 1, "__STATUS__" => "Issue: Unexpected attribute value(s)"],
+				["org_id" => "No match for value 'Bad'",1 => "Server1",2 => "1", 3 => "production", 4 => "", "id" => 1, "__STATUS__" => "Issue: Unexpected attribute value(s)"],
 			],
 			"Case 10 : Missing mandatory value" => [
 				[["", "Server1", "1", "production", ""]],
 				["name" => 1, "id" => 2, "status" => 3, "purchase_date" => 4],
 				["org_id" => ["name" => 0]],
 				["id"],
-				[ "org_id" => "", 1 => "Server1", 2 => "1", 3 => "production", 4 => "", "id" => 1, "__STATUS__" => "Issue: Unexpected attribute value(s)"],
+				[ "org_id" => "invalid value for attribute", 1 => "Server1", 2 => "1", 3 => "production", 4 => "", "id" => 1, "__STATUS__" => "Issue: Unexpected attribute value(s)"],
 			],
 			"Case 6 : Unexpected value" => [
 				[["Demo", "Server1", "1", "<svg onclick\"alert(1)\">", ""]],
@@ -156,7 +156,7 @@ class BulkChangeTest extends ItopDataTestCase {
 					"org_id" => "3",
 					1 => "Server1",
 					2 => "1",
-					3 => "&lt;svg onclick&quot;alert(1)&quot;&gt;",
+					3 => "'&lt;svg onclick&quot;alert(1)&quot;&gt;' is an invalid value",
 					4 => "",
 					"id" => 1,
 					"__STATUS__" => "Issue: Unexpected attribute value(s)",
@@ -224,7 +224,7 @@ class BulkChangeTest extends ItopDataTestCase {
 						$this->debug("i:".$i);
 						$this->debug('GetDisplayableValue:'.$oCell->GetDisplayableValue());
 						$this->debug("aResult:".$aResult[$i]);
-						$this->assertEquals( $aResult[$i], $oCell->GetDisplayableValue());
+						$this->assertEquals( $aResult[$i], $oCell->GetDisplayableValue(), "failure on " . get_class($oCell) . ' cell type');
 					} else if ($i === "__ERRORS__") {
 						$sErrors = array_key_exists("__ERRORS__", $aResult) ? $aResult["__ERRORS__"] : "";
 						$this->assertEquals( $sErrors, $oCell->GetDescription());
@@ -250,11 +250,11 @@ class BulkChangeTest extends ItopDataTestCase {
 					"org_id" => "3",
 					1 => "ServerTest",
 					2 => "1",
-					3 => "BadValue",
+					3 => "'BadValue' is an invalid value",
 					4 => "",
 					"id" => 1,
 					"__STATUS__" => "Issue: Unexpected attribute value(s)",
-					"__ERRORS__" => "Unexpected value for attribute 'status': no match found among: 'implementation,obsolete,production,stock'",
+					"__ERRORS__" => "Allowed values: implementation,obsolete,production,stock",
 				],
 			],
 			"Case 6 - 2 : Unexpected value (update)" => [
@@ -268,11 +268,11 @@ class BulkChangeTest extends ItopDataTestCase {
 					"org_id" => "3",
 					1 => "ServerTest",
 					2 => "1",
-					3 => "&lt;svg onclick&quot;alert(1)&quot;&gt;",
+					3 => "'&lt;svg onclick&quot;alert(1)&quot;&gt;' is an invalid value",
 					4 => "",
 					"id" => 1,
 					"__STATUS__" => "Issue: Unexpected attribute value(s)",
-					"__ERRORS__" => "Unexpected value for attribute 'status': no match found among: 'implementation,obsolete,production,stock'",
+					"__ERRORS__" => "Allowed values: implementation,obsolete,production,stock",
 				],
 			],
 			"Case 6 - 3 : Unexpected value (creation)" => [
@@ -285,11 +285,11 @@ class BulkChangeTest extends ItopDataTestCase {
 					0 => "Demo",
 					"org_id" => "3",
 					1 => "\"ServerTest\"",
-					2 => "&lt;svg onclick&quot;alert(1)&quot;&gt;",
+					2 => "'&lt;svg onclick&quot;alert(1)&quot;&gt;' is an invalid value",
 					3 => "",
 					"id" => 1,
 					"__STATUS__" => "Issue: Unexpected attribute value(s)",
-					"__ERRORS__" => "Unexpected value for attribute 'status': no match found among: 'implementation,obsolete,production,stock'",
+					"__ERRORS__" => "Allowed values: implementation,obsolete,production,stock",
 				],
 			],
 			"Case 8  : unchanged name" => [
@@ -314,7 +314,7 @@ class BulkChangeTest extends ItopDataTestCase {
 				["name" => 1, "id" => 2, "status" => 3, "purchase_date" => 4],
 				["org_id" => ["name" => 0]],
 				["id"],
-				[ 0 => "Demo", "org_id" => "n/a", 1 => "ServerTest", 2 => "1", 3 => "production", 4 => "date", "id" => 1, "__STATUS__" => "Issue: wrong date format"],
+				[ 0 => "Demo", "org_id" => "n/a", 1 => "ServerTest", 2 => "1", 3 => "production", 4 => "'date' is an invalid value", "id" => 1, "__STATUS__" => "Issue: wrong date format"],
 			],
 			"Case 9 - 2: wrong date format" => [
 				["1", "ServerTest", "production", ""],
@@ -322,7 +322,7 @@ class BulkChangeTest extends ItopDataTestCase {
 				["name" => 1, "id" => 2, "status" => 3, "purchase_date" => 4],
 				["org_id" => ["name" => 0]],
 				["id"],
-				[ 0 => "Demo", "org_id" => "n/a", 1 => "ServerTest", 2 => "1", 3 => "production", 4 => "&lt;svg onclick&quot;alert(1)&quot;&gt;", "id" => 1, "__STATUS__" => "Issue: wrong date format"],
+				[ 0 => "Demo", "org_id" => "n/a", 1 => "ServerTest", 2 => "1", 3 => "production", 4 => "'&lt;svg onclick&quot;alert(1)&quot;&gt;' is an invalid value", "id" => 1, "__STATUS__" => "Issue: wrong date format"],
 			],
 			"Case 1 - 1 : no match" => [
 				["1", "ServerTest", "production", ""],
@@ -330,7 +330,7 @@ class BulkChangeTest extends ItopDataTestCase {
 				["name" => 1, "id" => 2, "status" => 3, "purchase_date" => 4],
 				["org_id" => ["name" => 0]],
 				["id"],
-				[ 0 => "Bad", "org_id" => "",1 => "ServerTest",2 => "1", 3 => "production", 4 => "", "id" => 1, "__STATUS__" => "Issue: Unexpected attribute value(s)",
+				[ 0 => "Bad", "org_id" => "No match for value 'Bad'",1 => "ServerTest",2 => "1", 3 => "production", 4 => "", "id" => 1, "__STATUS__" => "Issue: Unexpected attribute value(s)",
 					"__ERRORS__" => "Object not found",
 				],
 			],
@@ -340,7 +340,7 @@ class BulkChangeTest extends ItopDataTestCase {
 				["name" => 1, "id" => 2, "status" => 3, "purchase_date" => 4],
 				["org_id" => ["name" => 0]],
 				["id"],
-				[ 0 => "&lt;svg fonclick&quot;alert(1)&quot;&gt;", "org_id" => "",1 => "ServerTest",2 => "1", 3 => "production", 4 => "", "id" => 1, "__STATUS__" => "Issue: Unexpected attribute value(s)",
+				[ 0 => "&lt;svg fonclick&quot;alert(1)&quot;&gt;", "org_id" => "No match for value '<svg fonclick\"alert(1)\">'",1 => "ServerTest",2 => "1", 3 => "production", 4 => "", "id" => 1, "__STATUS__" => "Issue: Unexpected attribute value(s)",
 					"__ERRORS__" => "Object not found",
 				],
 			],
@@ -350,7 +350,7 @@ class BulkChangeTest extends ItopDataTestCase {
 				["name" => 1, "id" => 2, "status" => 3, "purchase_date" => 4],
 				["org_id" => ["name" => 0]],
 				["id"],
-				[ 0 => "",  "org_id" => "", 1 => "ServerTest", 2 => "1", 3 => "production", 4 => "", "id" => 1, "__STATUS__" => "Issue: Unexpected attribute value(s)",
+				[ 0 => "",  "org_id" => "invalid value for attribute", 1 => "ServerTest", 2 => "1", 3 => "production", 4 => "", "id" => 1, "__STATUS__" => "Issue: Unexpected attribute value(s)",
 					"__ERRORS__" => "Null not allowed",
 				],
 			],
@@ -361,7 +361,7 @@ class BulkChangeTest extends ItopDataTestCase {
 				["name" => 1, "id" => 2, "status" => 3, "purchase_date" => 4],
 				["org_id" => ["name" => 0]],
 				["id"],
-				[ 0 => "Demo", "org_id" => "n/a", 1 => "ServerTest", 2 => "1", 3 => "production", 4 => "2020-20-03", "id" => 1, "__STATUS__" => "Issue: wrong date format"],
+				[ 0 => "Demo", "org_id" => "n/a", 1 => "ServerTest", 2 => "1", 3 => "production", 4 => "'2020-20-03' is an invalid value", "id" => 1, "__STATUS__" => "Issue: wrong date format"],
 			],
 		];
 	}

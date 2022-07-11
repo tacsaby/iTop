@@ -472,17 +472,7 @@ try {
 					if (isset($aExternalKeysByColumn[$iNumber - 1])) {
 						$sExtKeyName = $aExternalKeysByColumn[$iNumber - 1];
 						$oExtKeyCellStatus = $aResRow[$sExtKeyName];
-						switch (get_class($oExtKeyCellStatus)) {
-							case 'CellStatus_Issue':
-							case 'CellStatus_SearchIssue':
-							case 'CellStatus_NullIssue':
-							case 'CellStatus_Ambiguous':
-								$sCellMessage .= GetDivAlert($oExtKeyCellStatus->GetDescription());
-								break;
-
-							default:
-								// Do nothing
-						}
+						$oCellStatus = $oExtKeyCellStatus;
 					}
 					$sHtmlValue = $oCellStatus->GetDisplayableValue();
 					switch (get_class($oCellStatus)) {

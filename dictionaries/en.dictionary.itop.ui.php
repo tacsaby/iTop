@@ -650,7 +650,12 @@ We hope you’ll enjoy this version as much as we enjoyed imagining and creating
 	'UI:CSVReport-Value-Modified' => 'Modified',
 	'UI:CSVReport-Value-SetIssue' => 'invalid value for attribute',
 	'UI:CSVReport-Value-ChangeIssue' => '\'%1$s\' is an invalid value',
-	'UI:CSVReport-Value-NoMatch' => 'No match',
+	'UI:CSVReport-Value-NoMatch' => 'No match for value \'%1$s\'',
+	'UI:CSVReport-Value-NoMatch-PossibleValues' => 'Possible \'%1$s\' object values: %2$s',
+	'UI:CSVReport-Value-NoMatch-NoObject' => 'There are no \'%1$s\' object',
+	'UI:CSVReport-Value-NoMatch-NoObject-ForCurrentUser' => 'There are no \'%1$s\' object found with your current profile',
+	'UI:CSVReport-Value-NoMatch-SomeObjectNotVisibleForCurrentUser' => 'There are some \'%1$s\' object(s) not visible with your current profile',
+
 	'UI:CSVReport-Value-Missing' => 'Missing mandatory value',
 	'UI:CSVReport-Value-Ambiguous' => 'Ambiguous: found %1$s objects',
 	'UI:CSVReport-Row-Unchanged' => 'unchanged',
