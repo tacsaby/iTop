@@ -104,15 +104,17 @@ class CellStatus_Issue extends CellStatus_Modify
 class CellStatus_SearchIssue extends CellStatus_Issue
 {
 	private $m_sAllowedValues;
+	private $m_sTargetClass;
 
 	//message principal
 	//message secondaire
 	//possible values
 	//link
-	public function __construct($sReason, $sAllowedValues=null)
+	public function __construct($sReason, $sClass=null, $sAllowedValues=null)
 	{
 		parent::__construct(null, null, $sReason);
 		$this->m_sAllowedValues = $sAllowedValues;
+		$this->m_sTargetClass = $sClass;
 	}
 
 	public function GetDisplayableValue()
@@ -131,7 +133,7 @@ class CellStatus_SearchIssue extends CellStatus_Issue
 			return '';
 		}
 
-		return Dict::Format('UI:CSVReport-Value-NoMatch-PossibleValues', $this->m_sAllowedValues);
+		return Dict::Format('UI:CSVReport-Value-NoMatch-PossibleValues', $this->m_sTargetClass, $this->m_sAllowedValues);
 	}
 }
 
@@ -461,21 +463,23 @@ class BulkChange
 
 						if ($iAllowAllDataObjectCount === 0) {
 							//no objects at all
-							$sReason = Dict::Format('UI:CSVReport-Value-NoMatch-NoObject', $value);
+							$sReason = Dict::Format('UI:CSVReport-Value-NoMatch-NoObject', $oExtKey->GetTargetClass());
 							$aResults[$sAttCode]= new CellStatus_SearchIssue($sReason);
 
 							//search link for exhaustive values
 						} else {
 							if ($iCurrentUserRightsObjectCount === 0){
 								//no objects visible by current user
-								$sReason = Dict::Format('UI:CSVReport-Value-NoMatch-NoObject-ForCurrentUser', $value);
+								$sReason = Dict::Format('UI:CSVReport-Value-NoMatch-NoObject-ForCurrentUser',
+									$oExtKey->GetTargetClass());
 								$aResults[$sAttCode]= new CellStatus_SearchIssue($sReason);
 
 								//search link for exhaustive values
 							} else {
 								try{
 									$allowedValues="";
-									for($i=0; $i<4; $i++){
+									$oExtObjectSetWithCurrentUserPermissions->SetLimit(4);
+									for($i=0; $i<3; $i++){
 										/** @var \DBObject $oVisibleObject */
 										$oVisibleObject = $oExtObjectSetWithCurrentUserPermissions->Fetch();
 										if (is_null($oVisibleObject)){
@@ -483,10 +487,10 @@ class BulkChange
 										}
 
 										if ('' === $allowedValues){
-											$allowedValues = $oVisibleObject->GetName();
+											$allowedValues = $oVisibleObject->Get($sForeignAttCode);
 										}
 										else {
-											$allowedValues .= ', ' . $oVisibleObject->GetName();
+											$allowedValues .= ', ' . $oVisibleObject->Get($sForeignAttCode);
 										}
 									}
 
@@ -495,8 +499,9 @@ class BulkChange
 								}
 								if ($iAllowAllDataObjectCount != $iCurrentUserRightsObjectCount) {
 									//no match and some objects NOT visible by current user. including current search maybe...
-									$sReason = Dict::Format('UI:CSVReport-Value-NoMatch-SomeObjectNotVisibleForCurrentUser', $value);
-									$aResults[$sAttCode] = new CellStatus_SearchIssue($sReason, $allowedValues);
+									$sReason = Dict::Format('UI:CSVReport-Value-NoMatch-SomeObjectNotVisibleForCurrentUser',
+										$oExtKey->GetTargetClass());
+									$aResults[$sAttCode] = new CellStatus_SearchIssue($sReason, $oExtKey->GetTargetClass(), $allowedValues);
 
 									//possible values: DD,DD
 									//search link for exhaustive values
@@ -504,7 +509,7 @@ class BulkChange
 									//no match. this is not linked to any right issue
 									//possible values: DD,DD
 									$sReason = Dict::Format('UI:CSVReport-Value-NoMatch', $value);
-									$aResults[$sAttCode] = new CellStatus_SearchIssue($sReason, $allowedValues);
+									$aResults[$sAttCode] = new CellStatus_SearchIssue($sReason, $oExtKey->GetTargetClass(), $allowedValues);
 
 									//search link for exhaustive values
 								}
@@ -594,9 +599,9 @@ class BulkChange
 				{
 					//N°595 - display allowed valued for UI ergonomy
 					if ($oAttDef instanceof AttributeEnum || $oAttDef instanceof AttributeTagSet){
-						/** @var AttributeEnum $oAttEnumDef */
-						$oAttEnumDef = $oAttDef;
-						$aErrors[$sAttCode] = Dict::Format('UI:CSVReport-Value-Issue-AllowedValues', $sAttCode, implode(',', $oAttEnumDef->GetAllowedValues()));
+						/** @var AttributeDefinition $oAttributeDefinition */
+						$oAttributeDefinition = $oAttDef;
+						$aErrors[$sAttCode] = Dict::Format('UI:CSVReport-Value-Issue-AllowedValues', $sAttCode, implode(',', $oAttributeDefinition->GetAllowedValues()));
 					} else {
 						$aErrors[$sAttCode] = Dict::Format('UI:CSVReport-Value-Issue-NoMatch', $sAttCode);
 					}
@@ -996,7 +1001,7 @@ class BulkChange
 								$sFormat = $sDateFormat;
 							}
 							$oFormat = new DateTimeFormat($sFormat);
-							$sDateExample = $oFormat->Format(new DateTime());
+							$sDateExample = $oFormat->Format(new DateTime('2022-10-23 16:17:33'));
 							$sRegExp = $oFormat->ToRegExpr('/');
 							$sErrorMsg = Dict::Format('UI:CSVReport-Row-Issue-ExpectedDateFormat', $sDateExample);
 							if (!preg_match($sRegExp, $sValue))
