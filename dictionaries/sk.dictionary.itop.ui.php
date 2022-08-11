@@ -625,9 +625,9 @@ Dict::Add('SK SK', 'Slovak', 'Slovenčina', array(
 	'UI:UniversalSearch:LabelSelectTheClass' => 'Vyberte triedu na vyhľadávanie: ',
 
 	'UI:CSVReport-Value-Modified' => 'Upravený',
-	'UI:CSVReport-Value-SetIssue' => 'Nemožno zmeniť - dôvod: %1$s',
-	'UI:CSVReport-Value-ChangeIssue' => 'Nemožno zmeniť na %1$s - dôvod: %2$s',
-	'UI:CSVReport-Value-NoMatch' => 'Žiadna zhoda',
+	'UI:CSVReport-Value-SetIssue' => 'invalid value for attribute~~',
+	'UI:CSVReport-Value-ChangeIssue' => '\'%1$s\' is an invalid value~~',
+	'UI:CSVReport-Value-NoMatch' => 'No match for value \'%1$s\'~~',
 	'UI:CSVReport-Value-Missing' => 'Chýbajúca povinná hodnota',
 	'UI:CSVReport-Value-Ambiguous' => 'Nejednoznačné: nájdených %1$s objektov',
 	'UI:CSVReport-Row-Unchanged' => 'Nezmený',

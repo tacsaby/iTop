@@ -635,9 +635,9 @@ Dict::Add('CS CZ', 'Czech', 'Čeština', array(
 	'UI:UniversalSearch:LabelSelectTheClass' => 'Vyberte třídu pro hledání: ',
 
 	'UI:CSVReport-Value-Modified' => 'Upraveno',
-	'UI:CSVReport-Value-SetIssue' => 'Nemůže být změněno - důvod: %1$s',
-	'UI:CSVReport-Value-ChangeIssue' => 'Nemůže být změněno na %1$s - důvod: %2$s',
-	'UI:CSVReport-Value-NoMatch' => 'Žádná shoda',
+	'UI:CSVReport-Value-SetIssue' => 'invalid value for attribute~~',
+	'UI:CSVReport-Value-ChangeIssue' => '\'%1$s\' is an invalid value~~',
+	'UI:CSVReport-Value-NoMatch' => 'No match for value \'%1$s\'~~',
 	'UI:CSVReport-Value-Missing' => 'Chybí povinná hodnota',
 	'UI:CSVReport-Value-Ambiguous' => 'Nejednoznačné: nalezeno %1$s objektů',
 	'UI:CSVReport-Row-Unchanged' => 'nezměněn',
