@@ -872,7 +872,11 @@ try
 
 				if (is_object($value))
 				{
-					$aRowDisp["$sKey"] = $value->GetDisplayableValue().$value->GetDescription();
+					if ($value instanceof CellStatus_Issue){
+						$aRowDisp["$sKey"] = $value->GetDisplayableValue() . '. ' .$value->GetDescription();
+					} else {
+						$aRowDisp["$sKey"] = $value->GetDisplayableValue().$value->GetDescription();
+					}
 				}
 				else
 				{

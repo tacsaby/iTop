@@ -59,20 +59,40 @@ class ImportTest extends ItopDataTestCase {
 		$sLastName = "lastname_UID";
 		$sEmail = "email_UID@toto.fr";
 
+		$aTestOkParams = [
+			'sCsvHeaders' => '"first_name","name", "email", "org_id->name"',
+			'sCsvFirstLineValues' => sprintf('"%s", "%s", "%s", UID', $sFirstName, $sLastName, $sEmail),
+			'sExpectedLastLineNeedle' => sprintf('ORGID;"%s";"%s";"%s"', $sFirstName, $sLastName, $sEmail),
+			'sReconciliationKeys' => null,
+			'iExpectedIssue' => '0',
+			'iExpectedCreated' => '1',
+		];
+
+		$aTestOkParamsWithReconciliationKeys = array_merge($aTestOkParams,
+			['sReconciliationKeys' => "name,first_name,org_id->name"]);
+
+		$aTestFailedExtKeys = [
+			'sCsvHeaders' => '"first_name","name", "email", "org_id->name"',
+			'sCsvFirstLineValues' => sprintf('"%s", "%s", "%s", gabuzomeu', $sFirstName, $sLastName, $sEmail),
+			'sExpectedLastLineNeedle' => 'Issue: Unexpected attribute value(s);n/a;n/a;No match for value \'gabuzomeu\'. Possible \'Organization\' value(s): ',
+		];
+
+		$aTestFailedExtKeysWithReconciliationKeys = array_merge($aTestFailedExtKeys,
+			[
+				'sReconciliationKeys' => "name,first_name,org_id->name",
+				'sExpectedLastLineNeedle' => 'Issue: failed to reconcile;n/a;n/a;No match for value \'gabuzomeu\'. Possible \'Organization\' value(s): ',
+			]
+		);
+
 		return [
-			'import OK' => [
-				'sCsvHeaders' => '"first_name","name", "email", "org_id->name"',
-				'sCsvFirstLineValues' => sprintf('"%s", "%s", "%s", UID', $sFirstName, $sLastName, $sEmail),
-				'sExpectedLastLineNeedle' => sprintf('ORGID;"%s";"%s";"%s"', $sFirstName, $sLastName, $sEmail),
-			],
+			'import OK' => $aTestOkParams,
+			'import OK / with reconciliation keys' => $aTestOkParamsWithReconciliationKeys,
 			'import ERROR : invalid enum value' => [
 				'sCsvHeaders' => '"first_name","name", "email", "org_id->name", status',
 				'sCsvFirstLineValues' => sprintf('"%s", "%s", "%s", UID, toto', $sFirstName, $sLastName, $sEmail),
 				'sExpectedLastLineNeedle' => sprintf(
-						'Issue: Unexpected attribute value(s);n/a;n/a;ORGID;"%s";"%s";"%s";\'toto\' is an invalid valueUnexpected value for attribute \'status\': Value not allowed [toto]', $sFirstName, $sLastName, $sEmail
+						'Issue: Unexpected attribute value(s);n/a;n/a;ORGID;"%s";"%s";"%s";\'toto\' is an invalid value. Unexpected value for attribute \'status\': Value not allowed [toto]', $sFirstName, $sLastName, $sEmail
 				),
-				'iExpectedIssue' => '1',
-				'iExpectedCreated' => '0',
 			],
 			'import ERROR : invalid date value' => [
 				'sCsvHeaders' => '"first_name","name", "email", "org_id->name", obsolescence_date',
@@ -80,23 +100,16 @@ class ImportTest extends ItopDataTestCase {
 				'sExpectedLastLineNeedle' => sprintf(
 					'Issue: Internal error: Exception, Wrong format for date attribute obsolescence_date, expecting "Y-m-d" and got "toto";n/a;n/a;n/a;%s;%s;%s;toto', $sFirstName, $sLastName, $sEmail
 				),
-				'iExpectedIssue' => '1',
-				'iExpectedCreated' => '0',
 			],
-			'import ERROR : invalid ext field value' => [
-				'sCsvHeaders' => '"first_name","name", "email", "org_id->name"',
-				'sCsvFirstLineValues' => sprintf('"%s", "%s", "%s", gabuzomeu', $sFirstName, $sLastName, $sEmail),
-				'sExpectedLastLineNeedle' => 'Issue: Unexpected attribute value(s);n/a;n/a;No match for value \'gabuzomeu\'Possible \'Organization\' value(s): ',
-				'iExpectedIssue' => '1',
-				'iExpectedCreated' => '0',
-			],
+			'import ERROR : invalid ext field value' => $aTestFailedExtKeys,
+			'import ERROR : invalid ext field value / reconciliation keys' => $aTestFailedExtKeysWithReconciliationKeys,
 		];
 	}
 
 	/**
 	 * @dataProvider ImportProvider
 	 */
-	public function testImport($sCsvHeaders, $sCsvFirstLineValues, $sExpectedLastLineNeedle, $iExpectedIssue=0, $iExpectedCreated=1) {
+	public function testImport($sCsvHeaders, $sCsvFirstLineValues, $sExpectedLastLineNeedle, $sReconciliationKeys=null, $iExpectedIssue=1, $iExpectedCreated=0) {
 		$sContent = <<<CSVFILE
 $sCsvHeaders
 $sCsvFirstLineValues
@@ -110,6 +123,10 @@ CSVFILE;
 			'no_localize' => '1',
 			'output' => 'details',
 		];
+
+		if (null != $sReconciliationKeys){
+			$aParams["reconciliationkeys"] = $sReconciliationKeys;
+		}
 
 		$aRes = \utils::ExecITopScript('webservices/import.php', $aParams, $this->sLogin, $this->sPassword);
 		$aOutput = $aRes[1];
