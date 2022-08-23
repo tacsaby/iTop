@@ -508,15 +508,31 @@ class SetupUtils
 	/**
 	 * Check that the backup could be executed
 	 *
-	 * @param $sDBBackupPath
-	 * @param $sMySQLBinDir
+	 * @param string $sDBBackupPath
+	 * @param string $sMySQLBinDir
 	 *
 	 * @return \CheckResult[] An array of CheckResults objects
 	 *
+	 * @throws \ApplicationException
+	 *
+	 * @since 3.0.3 3.1.0 N°5439 get the error messages from backup dict (specific impl if running during the setup : {@see \BackupEnDict}, otherwise use the added parameter)
 	 * @since 3.0.0 N°2214 replace SetupLog::Log calls by CheckResult::TRACE
 	 */
-	public static function CheckBackupPrerequisites($sDBBackupPath, $sMySQLBinDir = null) {
+	public static function CheckBackupPrerequisites($sDBBackupPath, $sMySQLBinDir = null, $bShouldLoadBackupDict = true)
+	{
 		$aResult = array();
+		if ($bShouldLoadBackupDict) {
+			$aDictFiles = glob(APPROOT.'datamodels/*/itop-backup/dictionaries/en.dict.itop-backup.php');
+			if ((false === $aDictFiles) || ($aDictFiles === [])) {
+				throw new ApplicationException('Backup EN dictionary file cannot be loaded');
+			}
+			if (count($aDictFiles) > 1) {
+				throw new ApplicationException('Backup EN dictionary file : multiple matches !', ['matches' => $aDictFiles]);
+			}
+			require_once $aDictFiles[0];
+			$aResult[] = new CheckResult(CheckResult::TRACE, 'Backup EN dict loaded !');
+		}
+
 		$aResult[] = new CheckResult(CheckResult::TRACE, 'Info - CheckBackupPrerequisites');
 
 		// zip extension
