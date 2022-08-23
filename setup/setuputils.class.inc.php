@@ -535,42 +535,45 @@ class SetupUtils
 		$aDisabled = explode(', ', ini_get('disable_functions'));
 		$aResult[] = new CheckResult(CheckResult::TRACE, 'Info - PHP functions disabled: '.implode(', ', $aDisabled));
 		if (in_array('exec', $aDisabled)) {
+			$bExecAllowed = false;
 			$aResult[] = new CheckResult(CheckResult::ERROR, "The PHP exec() function has been disabled on this server");
+		} else {
+			$bExecAllowed = true;
 		}
 
 		// availability of mysqldump
-		if (empty($sMySQLBinDir) && null != MetaModel::GetConfig()) {
-			$sMySQLBinDir = MetaModel::GetConfig()->GetModuleSetting('itop-backup', 'mysql_bindir', '');
-		}
+		if (false === $bExecAllowed) {
+			$aResult[] = new CheckResult(CheckResult::ERROR, "Cannot check mysqldump as the PHP exec() function is disabled on this server");
+		} else {
+			if (empty($sMySQLBinDir) && null != MetaModel::GetConfig()) {
+				$sMySQLBinDir = MetaModel::GetConfig()->GetModuleSetting('itop-backup', 'mysql_bindir', '');
+			}
 
-		if (empty($sMySQLBinDir)) {
-			$sMySQLDump = 'mysqldump';
-		}
-		else {
-			$aResult[] = new CheckResult(CheckResult::TRACE, 'Info - Found mysql_bindir: '.$sMySQLBinDir);
-			$sMySQLDump = '"'.$sMySQLBinDir.'/mysqldump"';
-		}
-		$sCommand = "$sMySQLDump -V 2>&1";
+			if (empty($sMySQLBinDir)) {
+				$sMySQLDump = 'mysqldump';
+			} else {
+				$aResult[] = new CheckResult(CheckResult::TRACE, 'Info - Found mysql_bindir: '.$sMySQLBinDir);
+				$sMySQLDump = '"'.$sMySQLBinDir.'/mysqldump"';
+			}
+			$sCommand = "$sMySQLDump -V 2>&1";
 
-		$aOutput = array();
-		$iRetCode = 0;
-		exec($sCommand, $aOutput, $iRetCode);
-		if ($iRetCode == 0)
-		{
-			$aResult[] = new CheckResult(CheckResult::INFO, "mysqldump is present: Ok.");
-		}
-		elseif ($iRetCode == 1) {
-			// Unfortunately $aOutput is not really usable since we don't know its encoding (character set)
-			$aResult[] = new CheckResult(CheckResult::ERROR,
-				"mysqldump could not be found. Please make sure it is installed and in the path.");
-		}
-		else {
-			// Unfortunately $aOutput is not really usable since we don't know its encoding (character set)
-			$aResult[] = new CheckResult(CheckResult::ERROR,
-				"mysqldump could not be executed (retcode=$iRetCode): Please make sure it is installed and ".(empty($sMySQLBinDir) ? "in the path" : "located at : $sMySQLDump"));
-		}
-		foreach ($aOutput as $sLine) {
-			$aResult[] = new CheckResult(CheckResult::TRACE, 'Info - mysqldump -V said: '.$sLine);
+			$aOutput = array();
+			$iRetCode = 0;
+			exec($sCommand, $aOutput, $iRetCode);
+			if ($iRetCode == 0) {
+				$aResult[] = new CheckResult(CheckResult::INFO, "mysqldump is present: Ok.");
+			} elseif ($iRetCode == 1) {
+				// Unfortunately $aOutput is not really usable since we don't know its encoding (character set)
+				$aResult[] = new CheckResult(CheckResult::ERROR,
+					"mysqldump could not be found. Please make sure it is installed and in the path.");
+			} else {
+				// Unfortunately $aOutput is not really usable since we don't know its encoding (character set)
+				$aResult[] = new CheckResult(CheckResult::ERROR,
+					"mysqldump could not be executed (retcode=$iRetCode): Please make sure it is installed and ".(empty($sMySQLBinDir) ? "in the path" : "located at : $sMySQLDump"));
+			}
+			foreach ($aOutput as $sLine) {
+				$aResult[] = new CheckResult(CheckResult::TRACE, 'Info - mysqldump -V said: '.$sLine);
+			}
 		}
 
 		// create and test destination location
