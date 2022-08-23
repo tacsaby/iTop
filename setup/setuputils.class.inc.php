@@ -581,7 +581,7 @@ class SetupUtils
 		$sDestDir = dirname($sDBBackupPath);
 		setuputils::builddir($sDestDir);
 		if (!is_dir($sDestDir)) {
-			$aResult[] = new CheckResult(CheckResult::ERROR, "$sDestDir does not exist and could not be created.");
+			$aResult[] = new CheckResult(CheckResult::ERROR, "Backup dir `{$sDestDir}` does not exist and could not be created.");
 		}
 
 		// check disk space
