@@ -20,7 +20,6 @@
 use Combodo\iTop\Application\UI\Base\Component\Alert\AlertUIBlockFactory;
 use Combodo\iTop\Application\UI\Base\Component\Button\ButtonUIBlockFactory;
 use Combodo\iTop\Application\UI\Base\Component\DataTable\DataTableUIBlockFactory;
-use Combodo\iTop\Application\UI\Base\Component\FieldSet\FieldSet;
 use Combodo\iTop\Application\UI\Base\Component\Panel\PanelUIBlockFactory;
 use Combodo\iTop\Application\UI\Base\Component\Title\TitleUIBlockFactory;
 use Combodo\iTop\Application\UI\Base\Layout\UIContentBlock;
@@ -94,8 +93,27 @@ try {
 
 	$oP->AddUiBlock($oBlockForChecks);
 
-	// Availability of mysqldump
+	// Backup checks
 	//
+	$sBackupDir = realpath(APPROOT.'data/backups/');
+	$aBackupChecks = SetupUtils::CheckBackupPrerequisites($sBackupDir);
+	foreach ($aBackupChecks as $oBackupCheckResult) {
+		switch ($oBackupCheckResult->iSeverity) {
+			case CheckResult::TRACE:
+			case CheckResult::INFO:
+				$oBlockForChecks->AddSubBlock(
+					AlertUIBlockFactory::MakeForSuccess('', Dict::Format("bkp-mysqldump-ok", $aOutput[0]))
+						->SetIsClosable(false)
+						->SetIsCollapsible(false)
+				);
+				break;
+			case CheckResult::WARNING:
+			case CheckResult::ERROR:
+				//TODO
+				break;
+		}
+	}
+
 	$sMySQLBinDir = MetaModel::GetConfig()->GetModuleSetting('itop-backup', 'mysql_bindir', '');
 	$sMySQLBinDir = utils::ReadParam('mysql_bindir', $sMySQLBinDir, true);
 	if (empty($sMySQLBinDir)) {

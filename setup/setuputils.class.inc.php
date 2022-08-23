@@ -539,10 +539,12 @@ class SetupUtils
 		//
 		if (!extension_loaded('phar')) {
 			$sMissingExtensionLink = "<a href=\"http://www.php.net/manual/en/book.phar.php\" target=\"_blank\">zip</a>";
-			$aResult[] = new CheckResult(CheckResult::ERROR, "Missing PHP extension: phar", $sMissingExtensionLink);
+			$sMessage = Dict::S('bkp-checks.phpext-phar-missing');
+			$aResult[] = new CheckResult(CheckResult::ERROR, $sMessage, $sMissingExtensionLink);
 		}
 		if (!extension_loaded('zlib')) {
 			$sMissingExtensionLink = "<a href=\"http://www.php.net/manual/en/book.zlib.php\" target=\"_blank\">zip</a>";
+			$sMessage = Dict::S('bkp-checks.phpext-zlib-missing');
 			$aResult[] = new CheckResult(CheckResult::ERROR, "Missing PHP extension: zlib", $sMissingExtensionLink);
 		}
 
@@ -552,7 +554,8 @@ class SetupUtils
 		$aResult[] = new CheckResult(CheckResult::TRACE, 'Info - PHP functions disabled: '.implode(', ', $aDisabled));
 		if (in_array('exec', $aDisabled)) {
 			$bExecAllowed = false;
-			$aResult[] = new CheckResult(CheckResult::ERROR, "The PHP exec() function has been disabled on this server");
+			$sMessage = Dict::S('bkp-checks.exec-disabled');
+			$aResult[] = new CheckResult(CheckResult::ERROR, $sMessage);
 		} else {
 			$bExecAllowed = true;
 		}
