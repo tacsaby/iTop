@@ -582,6 +582,8 @@ class SetupUtils
 		setuputils::builddir($sDestDir);
 		if (!is_dir($sDestDir)) {
 			$aResult[] = new CheckResult(CheckResult::ERROR, "Backup dir `{$sDestDir}` does not exist and could not be created.");
+		} else if (!is_writable($sDestDir)) {
+			$aResult[] = new CheckResult(CheckResult::ERROR, "Backup dir `{$sDestDir}` isn't writable.");
 		}
 
 		// check disk space
