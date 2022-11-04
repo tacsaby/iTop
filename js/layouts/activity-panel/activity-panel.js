@@ -36,6 +36,7 @@ $(function()
 					save_state_endpoint: null,
 					last_loaded_entries_ids: {},
 					load_more_entries_endpoint: null,
+					wait_for_release_lock: false,
 				},
 			css_classes:
 				{
@@ -501,7 +502,7 @@ $(function()
 			{
 				// Hide all filters' options only if click wasn't on one of them
 				if(($(oEvent.target).closest(this.js_selectors.activity_filter_options_toggler).length === 0)
-				&& $(oEvent.target).closest(this.js_selectors.activity_filter_options).length === 0) {
+					&& $(oEvent.target).closest(this.js_selectors.activity_filter_options).length === 0) {
 					this._HideAllFiltersOptions();
 				}
 			},
@@ -948,9 +949,9 @@ $(function()
 
 				// Send request to server
 				$.post(
-					GetAbsoluteUrlAppRoot()+'pages/ajax.render.php',
-					oParams,
-					'json'
+						GetAbsoluteUrlAppRoot()+'pages/ajax.render.php',
+						oParams,
+						'json'
 					)
 					.fail(function (oXHR, sStatus, sErrorThrown) {
 						// TODO 3.0.0: Maybe we could have a centralized dialog to display error messages?
@@ -973,14 +974,25 @@ $(function()
 						// Try to fix inline images width
 						CombodoInlineImage.FixImagesWidth();
 
-						// For now, we don't hide the forms as the user may want to add something else
-						me.element.find(me.js_selectors.caselog_entry_form).trigger('clear_entry.caselog_entry_form.itop');
-
 						// Redirect to stimulus
 						// - Convert undefined, null and empty string to null
 						sStimulusCode = ((sStimulusCode ?? '') === '') ? null : sStimulusCode;
 						if (null !== sStimulusCode) {
-							window.location.href = GetAbsoluteUrlAppRoot()+'pages/UI.php?operation=stimulus&class='+me._GetHostObjectClass()+'&id='+me._GetHostObjectID()+'&stimulus='+sStimulusCode;
+							me.options.wait_for_release_lock = true;
+							// For now, we don't hide the forms as the user may want to add something else
+							me.element.find(me.js_selectors.caselog_entry_form).trigger('clear_entry.caselog_entry_form.itop');
+
+							//wait unlock on object
+							var oIntervalWaitForUnlock = setInterval(function () {
+								if (me.options.wait_for_release_lock === true) {
+									return
+								}
+								window.location.href = GetAbsoluteUrlAppRoot()+'pages/UI.php?operation=stimulus&class='+me._GetHostObjectClass()+'&id='+me._GetHostObjectID()+'&stimulus='+sStimulusCode;
+								clearInterval(oIntervalWaitForUnlock);
+							}, 50);
+						} else {
+							// For now, we don't hide the forms as the user may want to add something else
+							me.element.find(me.js_selectors.caselog_entry_form).trigger('clear_entry.caselog_entry_form.itop');
 						}
 					})
 					.always(function () {
@@ -998,7 +1010,7 @@ $(function()
 			_IncreaseTabTogglerMessagesCounter: function(sCaseLogAttCode){
 				let oTabTogglerCounter = this._GetTabTogglerFromCaseLogAttCode(sCaseLogAttCode).find('[data-role="ibo-activity-panel--tab-title-messages-count"]');
 				let iNewCounterValue = parseInt(oTabTogglerCounter.attr('data-messages-count')) + 1;
-				
+
 				oTabTogglerCounter.attr('data-messages-count', iNewCounterValue).text(iNewCounterValue);
 			},
 			/**
@@ -1099,11 +1111,10 @@ $(function()
 				else {
 					oParams.operation = 'check_lock_state';
 				}
-
 				$.post(
-					this.options.lock_endpoint,
-					oParams,
-					'json'
+						this.options.lock_endpoint,
+						oParams,
+						'json'
 					)
 					.fail(function (oXHR, sStatus, sErrorThrown) {
 						// In case of HTTP request failure (not lock request), put the details in the JS console
@@ -1153,6 +1164,9 @@ $(function()
 						// Tried to release our lock
 						else if ('release_lock' === oParams.operation) {
 							sNewLockStatus = me.enums.lock_status.unknown;
+							if (me.options.wait_for_release_lock === true) {
+								me.options.wait_for_release_lock = false;
+							}
 						}
 
 						// Just checked if object was locked
@@ -1387,9 +1401,9 @@ $(function()
 					limit_results_length: bLimitResultsLength,
 				};
 				$.post(
-					this.options.load_more_entries_endpoint,
-					oParams,
-					'json'
+						this.options.load_more_entries_endpoint,
+						oParams,
+						'json'
 					)
 					.fail(function (oXHR, sStatus, sErroThrown) {
 						// TODO 3.0.0: Maybe we could have a centralized dialog to display error messages?
