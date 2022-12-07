@@ -290,7 +290,13 @@ HTML
 		foreach($aLinkedObjectIds as $iObjectId)
 		{
 			$oLinkObj = MetaModel::GetObject($this->sLinkedClass, $iObjectId);
-			$oP->add($this->GetObjectRow($oP, $oLinkObj, $oLinkObj->GetKey()));
+			$oBlock = new BlockDirectLinksEditTable($this, $this->sInputid);
+			$iId = $oLinkObj->GetKey();
+			$aRow = $oBlock->CreateRow($oLinkObj, $iId, $oP);
+
+			$aAttribs = $this->GetTableConfig();
+			$sRow = $oP->GetTableRow($aRow, $aAttribs);
+			$oP->add($sRow);
 		}
 	}
 	
@@ -334,23 +340,6 @@ HTML
 		return $this->GetObjectRow($oPage, $oLinkObj, $iTempId);
 	}
 
-	/**
-	 * @param WebPage $oPage
-	 * @param $oLinkObj
-	 * @param int $iTempId
-	 * @return mixed
-	 */
-	protected function GetObjectRow($oPage, $oLinkObj, $iTempId)
-	{
-		$aAttribs = $this->GetTableConfig();
-		$aRow = array();
-		$aRow['form::select'] = '<input type="checkbox" class="selectList'.$this->sInputid.'" value="'.($iTempId).'"/>';
-		foreach($this->aZlist as $sLinkedAttCode)
-		{
-			$aRow[$sLinkedAttCode] = $oLinkObj->GetAsHTML($sLinkedAttCode);
-		}
-		return $oPage->GetTableRow($aRow, $aAttribs);		
-	}
 
 	/**
 	 * @param WebPage $oPage

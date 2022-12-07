@@ -51,11 +51,10 @@ $(function()
 			var me = this;
 			this.id = this.element.attr('id');
 
-			this.element
-			.addClass('itop-directlinks');
+			this.element.addClass('itop-directlinks');
 
 			this.datatable = this.element.find('table.listResults');
-			
+
 			// var aButtonsTypes = ['delete', 'remove', 'modify', 'add', 'create'];
 			// this.oButtons = {};
 			// for(k in aButtonsTypes)
@@ -71,6 +70,8 @@ $(function()
 			this.toBeAdded = [];
 			this.inputToBeRemoved = $('<input type="hidden" name="'+this.options.input_name+'_tbr" value="[]">');
 			this.toBeRemoved = [];
+			this.inputToBeModified = $('<input type="hidden" name="'+this.options.input_name+'_tbm" value="[]">');
+			this.toBeModified = [];
 
 
 			this.element
@@ -78,6 +79,7 @@ $(function()
 				.after(this.inputToBeDeleted)
 				.after(this.inputToBeAdded)
 				.after(this.inputToBeRemoved)
+				.after(this.inputToBeModified)
 				.after(this.indicator);
 
 			// for (k in this.options.buttons) {
@@ -104,7 +106,7 @@ $(function()
 
 			this._updateButtons();
 
-			me._updateTableInformation();
+			this._RegisterChange();
 		},
 
 		// called when created, and later when changing options
@@ -153,24 +155,7 @@ $(function()
 					break;
 			}
 		},
-		_updateTableInformation: function(){
-
-			let nbChecked = $('tbody tr input:checked', this.element).length;
-			let count = $('tbody tr input', this.element).length;
-
-			$('#linkedset_'+this.id+'_alert_information').toggleClass('ibo-is-information', nbChecked > 0);
-
-			if(nbChecked > 0){
-				$('#'+this.id+'_btnRemove').prop('disabled', false);
-				$('#linkedset_'+this.id+'_alert_information span[data-role="ibo-datatable-selection-value"]').text(nbChecked + ' / ' + count + ' éléments sélectionnés');
-			}
-			else{
-				$('#'+this.id+'_btnRemove').prop('disabled', true);
-				$('#linkedset_'+this.id+'_alert_information span[data-role="ibo-datatable-selection-value"]').text(count + ' éléments');
-			}
-		},
 		_onSelectChange: function () {
-			this._updateTableInformation();
 		},
 		_updateTable: function () {
 			var me = this;
@@ -180,7 +165,7 @@ $(function()
 			this.datatable.find('.selectList'+this.id).bind('change', function () {
 				me._updateButtons();
 			});
-
+			this._updateCount();
 		},
 		_updateDlgPosition: function () {
 			this.oDlg.dialog('option', {position: {my: "center", at: "center", of: window}});
@@ -467,10 +452,9 @@ $(function()
 
 
 				me._updateTable();
+				me._RegisterChange();
 				me.indicator.html('');
 				// me.oButtons['add'].prop('disabled', false);
-
-				me._updateTableInformation();
 			});
 		},
 		subclassSelected: function()
@@ -590,7 +574,27 @@ $(function()
 			oRow.remove();
 			this._updateButtons();
 			this._updateTable();
-			this._updateTableInformation();
+		},
+		_updateCount: function(){
+
+			// retrieve tab panel
+			let tabPanel = this.element.closest('[role="tabpanel"]');
+
+			// count table entries
+			let count = $('table tbody tr', tabPanel).length;
+
+			// update tab label
+			let id = tabPanel.attr('aria-labelledby');
+			let tabLabel = $(`[role="tab"][aria-labelledby="${id}"] > a > span`);
+			let regex = /^(.*)\((.*)\)$/;
+			let result = regex.exec(tabLabel.html());
+			tabLabel.html(result[1] + '(' + count + ')');
+
+			// update table info
+			let tableInfo = $('[data-role="ibo-panel--subtitle"]', tabPanel);
+			regex = /^(\D*)(\d+)(\D*)$/;
+			result = regex.exec(tableInfo.html());
+			tableInfo.html(result[1] + count + result[3] );
 		},
 		_removeSelection: function(){
 			var me = this;
@@ -652,6 +656,60 @@ $(function()
 				}
 			}
 			return aRes;
+		},
+		_RegisterChange: function () {
+
+			let me = this;
+
+			// Listen only used inputs
+			$('#' + this.id + ' :input[name^="attr_'+ this.options.att_code +'["]').off('change').on('change', function () {
+
+				if (!($(this).hasClass('selection')))
+				{
+					let oCheckbox = $(this).closest('tr').find('.selection');
+					let iLink = oCheckbox.attr('data-link-id');
+					let iUniqueId = oCheckbox.attr('data-unique-id');
+					let sAttCode = $(this).closest('.attribute-edit').attr('data-attcode');
+
+					let value = $(this).val();
+
+					console.log('update id: ' + iLink + ' uniq: ' + iUniqueId + ' att: ' + sAttCode + ' val: ' + value);
+
+					return me._OnValueChange(iLink, iUniqueId, sAttCode, value, me);
+				}
+				return true;
+			});
+		},
+		_OnValueChange: function (iLink, iUniqueId, sAttCode, value, $oSourceObject) {
+
+			let sFormPrefix = this.options.input_id;
+			if (iLink > 0)
+			{
+				// Modifying an existing link
+				let oModified = this.toBeModified[iLink];
+				if (oModified == undefined)
+				{
+					// Still not marked as modified
+					oModified = {};
+					oModified['formPrefix'] = sFormPrefix;
+				}
+				// Weird formatting, aligned with the output of the direct links widget (new links to be created)
+				oModified['attr_'+sFormPrefix+sAttCode] = value;
+				this.toBeModified[iLink] = oModified;
+			}
+			else
+			{
+				// Modifying a newly added link - the structure should already be up to date
+				if (iUniqueId < 0)
+				{
+					iUniqueId = -iUniqueId;
+				}
+				this.toBeAdded[iUniqueId]['attr_'+sFormPrefix+sAttCode] = value;
+			}
+
+			console.log(this.toBeModified);
+
+			this.inputToBeModified.val(JSON.stringify(this.toBeModified));
 		}
 	});	
 });

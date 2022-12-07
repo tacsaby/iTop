@@ -53,7 +53,15 @@ class BlockDirectLinksViewTable extends AbstractBlockLinksViewTable
 					$aRowActions[] = array(
 						'tooltip'       => 'UI:Links:ActionRow:detach',
 						'icon_classes'  => 'fas fa-minus',
-						'js_row_action' => "LinkSetWorker.DetachLinkedObject('{$this->sTargetClass}', aRowData['{$this->sTargetClass}/_key_/raw'], '{$this->oAttDef->GetExtKeyToMe()}');",
+						'js_row_action' => <<<JS
+	LinkSetWorker.DetachLinkedObject('{$this->sTargetClass}', aRowData['{$this->sTargetClass}/_key_/raw'], '{$this->oAttDef->GetExtKeyToMe()}', function(data){
+        if(data.data.success){
+            // oDatatable.row(oTrElement).remove().draw();
+            oTrElement.remove();
+        }
+	});
+JS
+						,
 						'confirmation'  => [
 							'message'                    => 'UI:Links:ActionRow:detach:confirmation',
 							'message_row_data'           => "{$this->sTargetClass}/hyperlink",
@@ -66,7 +74,15 @@ class BlockDirectLinksViewTable extends AbstractBlockLinksViewTable
 					$aRowActions[] = array(
 						'tooltip'       => 'UI:Links:ActionRow:delete',
 						'icon_classes'  => 'fas fa-trash',
-						'js_row_action' => "LinkSetWorker.DeleteLinkedObject('{$this->oAttDef->GetLinkedClass()}', aRowData['{$this->oAttDef->GetLinkedClass()}/_key_/raw']);",
+						'js_row_action' => <<<JS
+	LinkSetWorker.DeleteLinkedObject('{$this->oAttDef->GetLinkedClass()}', aRowData['{$this->oAttDef->GetLinkedClass()}/_key_/raw'], function(data){
+        if(data.data.success){
+            // oDatatable.row(oTrElement).remove().draw();
+            oTrElement.remove();
+        }
+	});
+JS
+						,
 						'confirmation'  => [
 							'message'                    => 'UI:Links:ActionRow:delete:confirmation',
 							'message_row_data'           => "{$this->sTargetClass}/hyperlink",

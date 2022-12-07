@@ -58,25 +58,7 @@ function LinksWidget(id, sClass, sAttCode, iInputId, sSuffix, bDuplicates, oWizH
 			return me.OnFormSubmit();
 		});
 
-		this.UpdateTableInformation();
 	};
-
-	this.UpdateTableInformation = function(){
-
-		let nbChecked = $('#linkedset_'+me.id+' .selection:checked').length;
-		let count = $('#linkedset_'+this.id+' tbody tr').length;
-
-		$('#linkedset_'+me.iInputId+'_alert_information').toggleClass('ibo-is-information', nbChecked > 0);
-
-		if(nbChecked > 0){
-			$('#'+me.id+'_btnRemove').prop('disabled', false);
-			$('#linkedset_'+me.iInputId+'_alert_information span[data-role="ibo-datatable-selection-value"]').text(nbChecked + ' / ' + count + ' éléments sélectionnés');
-		}
-		else{
-			$('#'+me.id+'_btnRemove').prop('disabled', true);
-			$('#linkedset_'+me.iInputId+'_alert_information span[data-role="ibo-datatable-selection-value"]').text(count + ' éléments');
-		}
-	}
 
 	this.RemoveSelected = function () {
 		let my_id = '#'+me.id;
@@ -91,8 +73,6 @@ function LinksWidget(id, sClass, sAttCode, iInputId, sSuffix, bDuplicates, oWizH
 			// All items were removed: add a dummy hidden input to make sure that the linkset will be updated (emptied) when posted
 			$('#'+me.id+'_empty_row').show();
 		}
-
-		this.UpdateTableInformation();
 	};
 
 	this.Remove = function(oRowElement){
@@ -114,12 +94,9 @@ function LinksWidget(id, sClass, sAttCode, iInputId, sSuffix, bDuplicates, oWizH
 				}
 				me.aAdded[iUniqueId] = null;
 			}
-
-		this.UpdateTableInformation();
 		}
 
 	this.OnSelectChange = function () {
-		this.UpdateTableInformation();
 	};
 
 	this.AddObjects = function () {

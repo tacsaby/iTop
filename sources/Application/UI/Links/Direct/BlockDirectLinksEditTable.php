@@ -6,6 +6,7 @@
 
 namespace Combodo\iTop\Application\UI\Links\Direct;
 
+use cmdbAbstractObject;
 use Combodo\iTop\Application\UI\Base\Component\Alert\AlertUIBlockFactory;
 use Combodo\iTop\Application\UI\Base\Component\Button\ButtonUIBlockFactory;
 use Combodo\iTop\Application\UI\Base\Component\DataTable\DataTableUIBlockFactory;
@@ -184,40 +185,74 @@ class BlockDirectLinksEditTable extends UIContentBlock
 		// result data
 		$aRows = array();
 
+
+		$iAddedId = -1; // Unique id for new links
+
 		// set pointer to start
 		$oValue->Rewind();
-
 		// create a row table for each value...
 		while ($oLinkObj = $oValue->Fetch()) {
-			$aRow = array();
-			$aRow['form::select'] = '<input type="checkbox" class="selectList'.$this->oUILinksDirectWidget->GetInputId().'" onClick="oWidget'.$this->oUILinksDirectWidget->GetInputId().'.directlinks(\'instance\')._onSelectChange();" value="'.$oLinkObj->GetKey().'"/>';
-			foreach ($this->oUILinksDirectWidget->GetZList() as $sLinkedAttCode) {
-				$aRow[$sLinkedAttCode] = $oLinkObj->GetAsHTML($sLinkedAttCode);
 
-				// tentative d'ajout des attributs en édition
-//				$sValue = $oLinkObj->Get($sLinkedAttCode);
-//				$sDisplayValue = $oLinkObj->GetEditValue($sLinkedAttCode);
-//				$oAttDef = MetaModel::GetAttributeDef($this->oUILinksDirectWidget->GetLinkedClass(), $sLinkedAttCode);
-//
-//				$aRow[$sLinkedAttCode] = '<div class="field_container" style="border:none;"><div class="field_data"><div class="field_value">'
-//					.\cmdbAbstractObject::GetFormElementForField(
-//						$oPage,
-//						$this->oUILinksDirectWidget->GetLinkedClass(),
-//						$sLinkedAttCode,
-//						$oAttDef,
-//						$sValue,
-//						$sDisplayValue,
-//						$this->GetFieldId($oValue, $sLinkedAttCode),
-//						']',
-//						0,
-//						[]
-//					)
-//					.'</div></div></div>';
-			}
-			$aRows[] = $aRow;
+			$aRows[] = $this->CreateRow($oLinkObj, $iAddedId, $oPage);
 		}
 
 		return $aRows;
+	}
+
+	public function CreateRow($oLinkObj, &$iAddedId, $oPage)
+	{
+		$sPrefix = "{$this->oUILinksDirectWidget->GetAttCode()}{$this->oUILinksDirectWidget->GetNameSuffix()}";
+
+		$aArgs = [];
+		if ($oLinkObj->IsNew()) {
+			$key = $iAddedId--;
+			$aArgs['wizHelper'] = "oWizardHelper{$this->oUILinksDirectWidget->GetInputId()}_".-$key;
+		} else {
+			$key = $oLinkObj->GetKey();
+			$aArgs['wizHelper'] = "oWizardHelper{$this->oUILinksDirectWidget->GetInputId()}".$key;
+		}
+
+		$aRow = array();
+		$aRow['form::select'] = '<input data-link-id="'.$oLinkObj->GetKey().'" data-unique-id="'.$key.'" type="checkbox" class="selection selectList'.$this->oUILinksDirectWidget->GetInputId().'" onClick="oWidget'.$this->oUILinksDirectWidget->GetInputId().'.directlinks(\'instance\')._onSelectChange();" value="'.$oLinkObj->GetKey().'"/>';
+
+		$aArgs['prefix'] = $sPrefix."[{$oLinkObj->GetKey()}][";
+
+
+		$aArgs['this'] = $oLinkObj;
+
+		foreach ($this->oUILinksDirectWidget->GetZList() as $sLinkedAttCode) {
+
+			// tentative d'ajout des attributs en édition
+			$sValue = $oLinkObj->Get($sLinkedAttCode);
+			$sDisplayValue = $oLinkObj->GetEditValue($sLinkedAttCode);
+			$oAttDef = MetaModel::GetAttributeDef($this->oUILinksDirectWidget->GetLinkedClass(), $sLinkedAttCode);
+
+			// show form field if writable
+			if ($oAttDef->IsWritable()) {
+				$aRow[$sLinkedAttCode] = '<div class="field_container" style="border:none;"><div class="field_data"><div class="field_value">'
+					.cmdbAbstractObject::GetFormElementForField(
+						$oPage,
+						$this->oUILinksDirectWidget->GetLinkedClass(),
+						$sLinkedAttCode,
+						$oAttDef,
+						$sValue,
+						$sDisplayValue,
+						$this->GetFieldId($oLinkObj->GetKey(), $sLinkedAttCode),
+						']',
+						0,
+						$aArgs
+					)
+					.'</div></div></div>';
+			} else {
+				$aRow[$sLinkedAttCode] = $oLinkObj->GetAsHTML($sLinkedAttCode);
+			}
+
+		}
+
+		$aFieldsMap = [];
+		$this->AddWizardHelperInit($oPage, $aArgs['wizHelper'], $this->oUILinksDirectWidget->GetLinkedClass(), $oLinkObj->GetState(), $aFieldsMap);
+
+		return $aRow;
 	}
 
 	private function GetFieldId($iLnkId, $sFieldCode, $bSafe = true)
@@ -245,5 +280,21 @@ class BlockDirectLinksEditTable extends UIContentBlock
 		}
 
 		return $aRowActions;
+	}
+
+	private function AddWizardHelperInit($oP, $sWizardHelperVarName, $sWizardHelperClass, $sState, $aFieldsMap): void
+	{
+		$iFieldsCount = count($aFieldsMap);
+		$sJsonFieldsMap = json_encode($aFieldsMap);
+
+		$oP->add_script(
+			<<<JS
+var $sWizardHelperVarName = new WizardHelper('$sWizardHelperClass', '', '$sState');
+$sWizardHelperVarName.SetFieldsMap($sJsonFieldsMap);
+$sWizardHelperVarName.SetFieldsCount($iFieldsCount);
+$sWizardHelperVarName.SetReturnNotEditableFields(true);
+$sWizardHelperVarName.SetWizHelperJsVarName('$sWizardHelperVarName');
+JS
+		);
 	}
 }
