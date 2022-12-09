@@ -351,20 +351,24 @@ HTML
 	 */
 	public function GetFormRow($oPage, $sRealClass, $aValues, $iTempId)
 	{
-		if ($sRealClass == '')
-		{
+		if ($sRealClass == '') {
 			$sRealClass = $this->sLinkedClass;
 		}
 		$oLinkObj = new $sRealClass();
 		$oLinkObj->UpdateObjectFromPostedForm($this->sInputid);
 
+//		$oBlock = new BlockDirectLinksEditTable($this, $this->sInputid);
+//		$iId = $oLinkObj->GetKey();
+//		$aRow = $oBlock->CreateRow($oLinkObj, $iId, $oPage);
+
+
 		$aAttribs = $this->GetTableConfig();
 		$aRow = array();
 		$aRow[] = '<input type="checkbox" class="selectList'.$this->sInputid.'" value="'.($iTempId).'"/>';
-		foreach($this->aZlist as $sLinkedAttCode)
-		{
+		foreach ($this->aZlist as $sLinkedAttCode) {
 			$aRow[] = $oLinkObj->GetAsHTML($sLinkedAttCode);
 		}
+
 		return $aRow;
 	}
 	

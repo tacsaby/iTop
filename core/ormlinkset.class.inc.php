@@ -185,12 +185,13 @@ class ormLinkSet implements iDBObjectSetIterator, Iterator, SeekableIterator
 		assert($oLink instanceof $this->sClass);
 
 		$iObjectId = $oLink->GetKey();
-        if (array_key_exists($iObjectId, $this->aPreserved))
-        {
-            unset($this->aPreserved[$iObjectId]);
-            $this->aModified[$iObjectId] = $oLink;
-            $this->bHasDelta = true;
-        }
+		if (array_key_exists($iObjectId, $this->aPreserved)) {
+			unset($this->aPreserved[$iObjectId]);
+			$this->aModified[$iObjectId] = $oLink;
+			$this->bHasDelta = true;
+		} else if (array_key_exists($iObjectId, $this->aAdded)) {
+			$this->aAdded[$iObjectId] = $oLink;
+		}
 	}
 
 	/**
