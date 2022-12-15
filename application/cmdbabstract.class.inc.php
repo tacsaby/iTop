@@ -3374,12 +3374,23 @@ EOF
 			// Consider only the "expected" fields for the target state
 			if (array_key_exists($sAttCode, $aExpectedAttributes)) {
 				$iExpectCode = $aExpectedAttributes[$sAttCode];
+
+				$oAttDef = MetaModel::GetAttributeDef($sClass, $sAttCode);
+				// Test if value is empty
+				if ($oAttDef instanceof AttributeExternalKey) {
+					$bIsValueEmpty = $this->Get($sAttCode) === 0;
+				} elseif ($oAttDef instanceof AttributeBlob) {
+					$bIsValueEmpty = $this->Get($sAttCode)->IsEmpty();
+				} else {
+					// Weak comparison on purpose to keep existing behavior on attribute types that are not explicitly tested
+					$bIsValueEmpty = $this->Get($sAttCode) == '';
+				}
+
 				// Prompt for an attribute if
 				// - the attribute must be changed or must be displayed to the user for confirmation
 				// - or the field is mandatory and currently empty
 				if (($iExpectCode & (OPT_ATT_MUSTCHANGE | OPT_ATT_MUSTPROMPT)) ||
-					(($iExpectCode & OPT_ATT_MANDATORY) && ($this->Get($sAttCode) == ''))) {
-					$oAttDef = MetaModel::GetAttributeDef($sClass, $sAttCode);
+					(($iExpectCode & OPT_ATT_MANDATORY) && $bIsValueEmpty)) {
 					$aArgs = array('this' => $this);
 					// If the field is mandatory, set it to the only possible value
 					if ((!$oAttDef->IsNullAllowed()) || ($iExpectCode & OPT_ATT_MANDATORY)) {
