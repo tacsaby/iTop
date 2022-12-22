@@ -638,11 +638,11 @@ class TriggerOnObjectMention extends TriggerOnObject
 }
 
 /**
- * Class TriggerOnDocumentAttributeDownload
+ * Class TriggerOnAttributeDocumentDownload
  *
  * @since 3.1.0
  */
-class TriggerOnDocumentAttributeDownload extends TriggerOnObject
+class TriggerOnAttributeDocumentDownload extends TriggerOnObject
 {
 	/**
 	 * @inheritDoc
@@ -658,7 +658,7 @@ class TriggerOnDocumentAttributeDownload extends TriggerOnObject
 			"name_attcode" => "description",
 			"state_attcode" => "",
 			"reconc_keys" => array('description'),
-			"db_table" => "priv_trigger_ondocattdownload",
+			"db_table" => "priv_trigger_onattdocdownload",
 			"db_key_field" => "id",
 			"db_finalclass_field" => "",
 			"display_template" => "",
