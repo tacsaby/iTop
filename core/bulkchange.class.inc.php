@@ -600,50 +600,63 @@ class BulkChange
 			}
 
 			$aReasons = array();
+			$bCanUpdate = true;
+
+			// if the field is read-only, tests if its value changes. there are different tests depending on types of fields
 			$iFlags = ($oTargetObj->IsNew())
 				? $oTargetObj->GetInitialStateAttributeFlags($sAttCode, $aReasons)
 				: $oTargetObj->GetAttributeFlags($sAttCode, $aReasons);
-			if ( (($iFlags & OPT_ATT_READONLY) == OPT_ATT_READONLY) && ( $oTargetObj->Get($sAttCode) != $aRowData[$iCol]) ) {
-				$aErrors[$sAttCode] = Dict::Format('UI:CSVReport-Value-Issue-Readonly', $sAttCode, $oTargetObj->Get($sAttCode), $aRowData[$iCol]);
-			}
-			else if ($oAttDef->IsLinkSet() && $oAttDef->IsIndirect())
-			{
-				try
-				{
-					$oSet = $oAttDef->MakeValueFromString($aRowData[$iCol], $this->m_bLocalizedValues);
-					$oTargetObj->Set($sAttCode, $oSet);
-				}
-				catch(CoreException $e)
-				{
-					$aErrors[$sAttCode] = Dict::Format('UI:CSVReport-Value-Issue-Format', $e->getMessage());
-				}
-			}
-			else
-			{
-				$value = $oAttDef->MakeValueFromString($aRowData[$iCol], $this->m_bLocalizedValues);
-				if (is_null($value) && (strlen($aRowData[$iCol]) > 0))
-				{
-					if ($oAttDef instanceof AttributeEnum || $oAttDef instanceof AttributeTagSet){
-						/** @var AttributeDefinition $oAttributeDefinition */
-						$oAttributeDefinition = $oAttDef;
-						$aErrors[$sAttCode] = Dict::Format('UI:CSVReport-Value-Issue-AllowedValues', $sAttCode, implode(',', $oAttributeDefinition->GetAllowedValues()));
+			if (($iFlags & OPT_ATT_READONLY) == OPT_ATT_READONLY) {
+				if (is_object($oTargetObj->Get($sAttCode))) {
+					if (method_exists($value, 'GetValueForQuery')) {
+						if ($oTargetObj->Get($sAttCode)->GetValueForQuery() != $oAttDef->MakeValueFromString($aRowData[$iCol], $this->m_bLocalizedValues)->GetValueForQuery()) {
+							$bCanUpdate = false;
+						}
 					} else {
-						$aErrors[$sAttCode] = Dict::Format('UI:CSVReport-Value-Issue-NoMatch', $sAttCode);
+						if ($oTargetObj->Get($sAttCode) != $oAttDef->MakeValueFromString($aRowData[$iCol], $this->m_bLocalizedValues)) {
+							$bCanUpdate = false;
+						}
+					}
+				} else {
+					if ($oTargetObj->Get($sAttCode) != $oAttDef->MakeValueFromString($aRowData[$iCol], $this->m_bLocalizedValues)) {
+						$bCanUpdate = false;
 					}
 				}
-				else
-				{
-					$res = $oTargetObj->CheckValue($sAttCode, $value);
-					if ($res === true)
-					{
-						$oTargetObj->Set($sAttCode, $value);
+			}
+
+			//get value if update is possible
+			//otherwise display an error message
+			if ($bCanUpdate) {
+				if ($oAttDef->IsLinkSet() && $oAttDef->IsIndirect()) {
+					try {
+						$oSet = $oAttDef->MakeValueFromString($aRowData[$iCol], $this->m_bLocalizedValues);
+						$oTargetObj->Set($sAttCode, $oSet);
 					}
-					else
-					{
-						// $res is a string with the error description
-						$aErrors[$sAttCode] = Dict::Format('UI:CSVReport-Value-Issue-Unknown', $sAttCode, $res);
+					catch (CoreException $e) {
+						$aErrors[$sAttCode] = Dict::Format('UI:CSVReport-Value-Issue-Format', $e->getMessage());
+					}
+				} else {
+					$value = $oAttDef->MakeValueFromString($aRowData[$iCol], $this->m_bLocalizedValues);
+					if (is_null($value) && (strlen($aRowData[$iCol]) > 0)) {
+						if ($oAttDef instanceof AttributeEnum || $oAttDef instanceof AttributeTagSet) {
+							/** @var AttributeDefinition $oAttributeDefinition */
+							$oAttributeDefinition = $oAttDef;
+							$aErrors[$sAttCode] = Dict::Format('UI:CSVReport-Value-Issue-AllowedValues', $sAttCode, implode(',', $oAttributeDefinition->GetAllowedValues()));
+						} else {
+							$aErrors[$sAttCode] = Dict::Format('UI:CSVReport-Value-Issue-NoMatch', $sAttCode);
+						}
+					} else {
+						$res = $oTargetObj->CheckValue($sAttCode, $value);
+						if ($res === true) {
+							$oTargetObj->Set($sAttCode, $value);
+						} else {
+							// $res is a string with the error description
+							$aErrors[$sAttCode] = Dict::Format('UI:CSVReport-Value-Issue-Unknown', $sAttCode, $res);
+						}
 					}
 				}
+			} else {
+				$aErrors[$sAttCode] = Dict::Format('UI:CSVReport-Value-Issue-Readonly', $sAttCode, $oTargetObj->Get($sAttCode), $aRowData[$iCol]);
 			}
 		}
 
