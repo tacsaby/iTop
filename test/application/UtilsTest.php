@@ -809,6 +809,7 @@ class UtilsTest extends ItopTestCase
 	 */
 	public function testStrFTime($sFormat, $iTimestamp, $sExpected)
 	{
+		date_default_timezone_set('UTC');
 		$this->assertEquals($sExpected, utils::StrFTime($sFormat, $iTimestamp));
 	}
 
