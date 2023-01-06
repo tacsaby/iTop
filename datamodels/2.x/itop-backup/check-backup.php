@@ -116,11 +116,11 @@ function MakeArchiveFileName($iRefTime = null)
 	
 	if (is_null($iRefTime))
 	{
-		$sBackupFile = strftime($sBackupFile);
+		$sBackupFile = utils::StrFTime($sBackupFile);
 	}
 	else
 	{
-		$sBackupFile = strftime($sBackupFile, $iRefTime);
+		$sBackupFile = utils::StrFTime($sBackupFile, $iRefTime);
 	}
 
 	return $sBackupFile;

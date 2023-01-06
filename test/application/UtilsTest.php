@@ -802,4 +802,22 @@ class UtilsTest extends ItopTestCase
 			'raw_data' => ['raw_data', '<Test>\s😃😃😃', '<Test>\s😃😃😃'],
 		];
 	}
+
+	/**
+	 * @dataProvider StrFTimeProvider
+	 * @return void
+	 */
+	public function testStrFTime($sFormat, $iTimestamp, $sExpected)
+	{
+		$this->assertEquals($sExpected, utils::StrFTime($sFormat, $iTimestamp));
+	}
+
+	public function StrFTimeProvider()
+	{
+		return [
+			['backup-%Y-%m-%d', 1673000961, 'backup-2023-01-06'],
+			['%Y-%m-%d-backup', 1673000961, '2023-01-06-backup'],
+			['date-%Y-%m-%d-time-%H-%M-%S-timestamp-%s', 1673001879, 'date-2023-01-06-time-10-44-39-timestamp-1673001879'],
+		];
+	}
 }

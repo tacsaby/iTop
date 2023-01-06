@@ -157,7 +157,7 @@ class DBBackup
 		$sFileName = str_replace('__DB__', $this->sDBName, $sFileName);
 		$sFileName = str_replace('__SUBNAME__', $this->sDBSubName, $sFileName);
 		// Transform %Y, etc.
-		$sFileName = strftime($sFileName);
+		$sFileName = utils::StrFTime($sFileName);
 
 		return $sFileName;
 	}

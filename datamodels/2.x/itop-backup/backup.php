@@ -69,7 +69,17 @@ function Usage($oP)
 		$oP->p('auth_user: login, must be administrator');
 		$oP->p('auth_pwd: ...');
 	}
-	$oP->p('backup_file [optional]: name of the file to store the backup into. Follows the PHP strftime format spec. The following placeholders are available: __HOST__, __DB__, __SUBNAME__');
+	$oP->p('backup_file [optional]: name of the file to store the backup into. Follows the backup format spec. The following placeholders are available: __HOST__, __DB__, __SUBNAME__');
+	$oP->p("  Formatting rules:");
+	$oP->p("    %Y-%m-%d => 2011-01-25...");
+	$oP->p("    '%d' => Two-digit day of the month (with leading zeros)");
+	$oP->p("    '%m' => Two digit representation of the month");
+	$oP->p("    '%y' => Two digit representation of the year");
+	$oP->p("    '%Y' => Four digit representation for the year");
+	$oP->p("    '%H' => Two digit representation of the hour in 24-hour format (with leading zeros)");
+	$oP->p("    '%M' => Two digit representation of the minute (with leading zeros)");
+	$oP->p("    '%S' => Two digit representation of the second (with leading zeros)");
+	$oP->p("    '%s' => Unix Epoch Time timestamp (same as the time() function)");
 	$oP->p('simulate [optional]: set to check the name of the file that would be created');
 	$oP->p('mysql_bindir [optional]: specify the path for mysqldump');
 
@@ -130,7 +140,7 @@ function ExecuteMainOperation($oP){
 	$sDefaultBackupFileName = SetupUtils::GetTmpDir().'/'."__DB__-%Y-%m-%d";
 	$sBackupFile =  utils::ReadParam('backup_file', $sDefaultBackupFileName, true, 'raw_data');
 
-// Interpret strftime specifications (like %Y) and database placeholders
+	// Interpret backup time format specifications (like %Y) and database placeholders
 	$oBackup = new MyDBBackup($oP);
 	$oBackup->SetMySQLBinDir(MetaModel::GetConfig()->GetModuleSetting('itop-backup', 'mysql_bindir', ''));
 	$sBackupFile = $oBackup->MakeName($sBackupFile);
