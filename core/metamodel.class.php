@@ -4180,18 +4180,18 @@ abstract class MetaModel
 				}
 				else
 				{
-					if (is_scalar($value)) {
+					if (is_scalar($value))
+					{
 						$aScalarArgs[$sArgName] = (string)$value;
-					} elseif (is_null($value)) {
-						$aScalarArgs[$sArgName] = null;
-					} elseif (is_array($value)) {
-						$aScalarArgs[$sArgName] = $value;
-					} else {
-						if (is_object($value) && method_exists($value, 'GetValueForQuery')) {
-							$aScalarArgs[$sArgName] = $value->GetValueForQuery();
-						}
 					}
-
+					elseif (is_null($value))
+					{
+						$aScalarArgs[$sArgName] = null;
+					}
+					elseif (is_array($value))
+					{
+						$aScalarArgs[$sArgName] = $value;
+					}
 				}
 			}
 			return static::AddMagicPlaceholders($aScalarArgs, $aExpectedArgs);
