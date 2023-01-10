@@ -4,6 +4,7 @@
  * @license     http://opensource.org/licenses/AGPL-3.0
  */
 
+use Combodo\iTop\Core\CMDBSource\CMDBSourceService;
 use Combodo\iTop\Core\MetaModel\FriendlyNameType;
 use Combodo\iTop\Service\Events\EventData;
 use Combodo\iTop\Service\Events\EventService;
@@ -156,6 +157,9 @@ abstract class DBObject implements iDisplay
 	/** @var \DBObject Source object when updating links */
 	protected $m_oLinkHostObject = null;
 
+	/** @var \Combodo\iTop\Core\CMDBSource\iCMDBSourceService  Cannot type the variable, it will fail on init... */
+	protected static $oCMDBSource;
+
 	/**
      * DBObject constructor.
      *
@@ -174,6 +178,8 @@ abstract class DBObject implements iDisplay
      */
 	public function __construct($aRow = null, $sClassAlias = '', $aAttToLoad = null, $aExtendedDataSpec = null)
 	{
+		self::InitCMDBSource();
+
 		if (!empty($aRow))
 		{
 			$this->FromRow($aRow, $sClassAlias, $aAttToLoad, $aExtendedDataSpec);
@@ -692,6 +698,21 @@ abstract class DBObject implements iDisplay
 			$sValue = substr($sValue, 0, $iMaxSize);
 		}
 		$this->Set($sAttCode, $sValue);
+	}
+
+	/**
+	 * Init the CMDBSourceService with a value if provided, else init with a new CMDBSourceService if currently null
+	 * @param \Combodo\iTop\Core\CMDBSource\CMDBSourceService|null $oCMDBSource
+	 *
+	 * @return void
+	 */
+	public final static function InitCMDBSource(CMDBSourceService $oCMDBSource = null): void
+	{
+		if (!is_null($oCMDBSource)) {
+			self::$oCMDBSource = $oCMDBSource;
+		} elseif (is_null(self::$oCMDBSource)) {
+			self::$oCMDBSource = new CMDBSourceService();
+		}
 	}
 
 	/**
@@ -2693,6 +2714,7 @@ abstract class DBObject implements iDisplay
 	static public final function BulkInsertFlush()
 	{
 		if (!self::$m_bBulkInsert) return;
+		self::InitCMDBSource();
 
 		foreach(self::$m_aBulkInsertCols as $sClass => $aTables)
 		{
@@ -2700,7 +2722,7 @@ abstract class DBObject implements iDisplay
 			{
 				$sValues = implode(', ', self::$m_aBulkInsertItems[$sClass][$sTable]);
 				$sInsertSQL = "INSERT INTO `$sTable` ($sColumns) VALUES $sValues";
-				CMDBSource::InsertInto($sInsertSQL);
+				self::$oCMDBSource->InsertInto($sInsertSQL);
 			}
 		}
 
@@ -2737,7 +2759,7 @@ abstract class DBObject implements iDisplay
 		{
 			// Add it to the list of fields to write
 			$aFieldsToWrite[] = '`'.MetaModel::DBGetKey($sTableClass).'`';
-			$aValuesToWrite[] = CMDBSource::Quote($this->m_iKey);
+			$aValuesToWrite[] = self::$oCMDBSource->Quote($this->m_iKey);
 		}
 
 		$aHierarchicalKeys = array();
@@ -2753,7 +2775,7 @@ abstract class DBObject implements iDisplay
 			foreach($aAttColumns as $sColumn => $sValue)
 			{
 				$aFieldsToWrite[] = "`$sColumn`"; 
-				$aValuesToWrite[] = CMDBSource::Quote($sValue);
+				$aValuesToWrite[] = self::$oCMDBSource->Quote($sValue);
 			}
 			if ($oAttDef->IsHierarchicalKey())
 			{
@@ -2793,7 +2815,7 @@ abstract class DBObject implements iDisplay
 					}
 				}
 				$sInsertSQL = "INSERT INTO `$sTable` (".join(",", $aFieldsToWrite).") VALUES (".join(", ", $aValuesToWrite).")";
-				$iNewKey = CMDBSource::InsertInto($sInsertSQL);
+				$iNewKey = self::$oCMDBSource->InsertInto($sInsertSQL);
 			}
 		}
 		// Note that it is possible to have a key defined here, and the autoincrement expected, this is acceptable in a non root class
@@ -2850,7 +2872,7 @@ abstract class DBObject implements iDisplay
 		{
 			// Add it to the list of fields to write
 			$aFieldsToWrite[] = '`'.MetaModel::DBGetKey($sTableClass).'`';
-			$aValuesToWrite[] = CMDBSource::Quote($this->m_iKey);
+			$aValuesToWrite[] = self::$oCMDBSource->Quote($this->m_iKey);
 		}
 
 		$aHierarchicalKeys = array();
@@ -2878,7 +2900,7 @@ abstract class DBObject implements iDisplay
 			foreach($aAttColumns as $sColumn => $sValue)
 			{
 				$aFieldsToWrite[] = "`$sColumn`"; 
-				$aValuesToWrite[] = CMDBSource::Quote($sValue);
+				$aValuesToWrite[] = self::$oCMDBSource->Quote($sValue);
 			}
 			if ($oAttDef->IsHierarchicalKey())
 			{
@@ -3002,7 +3024,7 @@ abstract class DBObject implements iDisplay
 			try {
 				$iTransactionRetry--;
 				if ($bIsTransactionEnabled) {
-					CMDBSource::Query('START TRANSACTION');
+					self::$oCMDBSource->Query('START TRANSACTION');
 				}
 
 				// First query built upon on the root class, because the ID must be created first
@@ -3030,15 +3052,15 @@ abstract class DBObject implements iDisplay
 				$this->RecordObjCreation();
 
 				if ($bIsTransactionEnabled) {
-					CMDBSource::Query('COMMIT');
+					self::$oCMDBSource->Query('COMMIT');
 				}
 				break;
 			}
 			catch (Exception $e) {
 				IssueLog::Error($e->getMessage());
 				if ($bIsTransactionEnabled) {
-					CMDBSource::Query('ROLLBACK');
-					if (!CMDBSource::IsInsideTransaction() && CMDBSource::IsDeadlockException($e)) {
+					self::$oCMDBSource->Query('ROLLBACK');
+					if (!self::$oCMDBSource->IsInsideTransaction() && self::$oCMDBSource->IsDeadlockException($e)) {
 						// Deadlock found when trying to get lock; try restarting transaction (only in main transaction)
 						if ($iTransactionRetry > 0) {
 							// wait and retry
@@ -3226,7 +3248,7 @@ abstract class DBObject implements iDisplay
 					$iTransactionRetry--;
 					if ($bIsTransactionEnabled)
 					{
-						CMDBSource::Query('START TRANSACTION');
+						self::$oCMDBSource->Query('START TRANSACTION');
 					}
 					if (!MetaModel::DBIsReadOnly())
 					{
@@ -3235,7 +3257,7 @@ abstract class DBObject implements iDisplay
 						{
 							$sTable = MetaModel::DBGetTable($sClass, $sAttCode);
 							$sSQL = "SELECT `".$oAttDef->GetSQLRight()."` AS `right`, `".$oAttDef->GetSQLLeft()."` AS `left` FROM `$sTable` WHERE id=".$this->GetKey();
-							$aRes = CMDBSource::QueryToArray($sSQL);
+							$aRes = self::$oCMDBSource->QueryToArray($sSQL);
 							$iMyLeft = $aRes[0]['left'];
 							$iMyRight = $aRes[0]['right'];
 							$iDelta = $iMyRight - $iMyLeft + 1;
@@ -3244,7 +3266,7 @@ abstract class DBObject implements iDisplay
 							if ($aDBChanges[$sAttCode] == 0) {
 								// No new parent, insert completely at the right of the tree
 								$sSQL = "SELECT max(`".$oAttDef->GetSQLRight()."`) AS max FROM `$sTable`";
-								$aRes = CMDBSource::QueryToArray($sSQL);
+								$aRes = self::$oCMDBSource->QueryToArray($sSQL);
 								if (count($aRes) == 0)
 								{
 									$iNewLeft = 1;
@@ -3258,7 +3280,7 @@ abstract class DBObject implements iDisplay
 							{
 								// Insert at the right of the specified parent
 								$sSQL = "SELECT `".$oAttDef->GetSQLRight()."` FROM `$sTable` WHERE id=".((int)$aDBChanges[$sAttCode]);
-								$iNewLeft = CMDBSource::QueryToScalar($sSQL);
+								$iNewLeft = self::$oCMDBSource->QueryToScalar($sSQL);
 							}
 
 							MetaModel::HKReplugBranch($iNewLeft, $iNewLeft + $iDelta - 1, $oAttDef, $sTable);
@@ -3278,7 +3300,7 @@ abstract class DBObject implements iDisplay
 							$oFilter->AllowAllData();
 
 							$sSQL = $oFilter->MakeUpdateQuery($aDBChanges);
-							CMDBSource::Query($sSQL);
+							self::$oCMDBSource->Query($sSQL);
 						}
 					}
 					$this->DBWriteLinks();
@@ -3289,7 +3311,7 @@ abstract class DBObject implements iDisplay
 					}
 
 					if ($bIsTransactionEnabled) {
-						CMDBSource::Query('COMMIT');
+						self::$oCMDBSource->Query('COMMIT');
 					}
 					break;
 				}
@@ -3298,8 +3320,8 @@ abstract class DBObject implements iDisplay
 					IssueLog::Error($e->getMessage());
 					if ($bIsTransactionEnabled)
 					{
-						CMDBSource::Query('ROLLBACK');
-						if (!CMDBSource::IsInsideTransaction() && CMDBSource::IsDeadlockException($e))
+						self::$oCMDBSource->Query('ROLLBACK');
+						if (!self::$oCMDBSource->IsInsideTransaction() && self::$oCMDBSource->IsDeadlockException($e))
 						{
 							// Deadlock found when trying to get lock; try restarting transaction (only in main transaction)
 							if ($iTransactionRetry > 0)
@@ -3323,7 +3345,7 @@ abstract class DBObject implements iDisplay
 					IssueLog::Error($e->getMessage());
 					if ($bIsTransactionEnabled)
 					{
-						CMDBSource::Query('ROLLBACK');
+						self::$oCMDBSource->Query('ROLLBACK');
 					}
 					throw $e;
 				}
@@ -3332,7 +3354,7 @@ abstract class DBObject implements iDisplay
 					IssueLog::Error($e->getMessage());
 					if ($bIsTransactionEnabled)
 					{
-						CMDBSource::Query('ROLLBACK');
+						self::$oCMDBSource->Query('ROLLBACK');
 					}
 					$aErrors = [$e->getMessage()];
 					throw new CoreCannotSaveObjectException(['id' => $this->GetKey(), 'class' => $sClass, 'issues' => $aErrors,]);
@@ -3432,11 +3454,11 @@ abstract class DBObject implements iDisplay
 		// prepare SQL statement
 		$sTable = MetaModel::DBGetTable($sClass, $sAttCode);
 		$sPKField = '`'.MetaModel::DBGetKey($sClass).'`';
-		$sKey = CMDBSource::Quote($this->m_iKey);
+		$sKey = self::$oCMDBSource->Quote($this->m_iKey);
 		$sUpdateSQL = "UPDATE `{$sTable}` SET `{$sAttCode}` = `{$sAttCode}`+{$iValue} WHERE {$sPKField} = {$sKey}";
 
 		// execute SQL query
-		CMDBSource::Query($sUpdateSQL);
+		self::$oCMDBSource->Query($sUpdateSQL);
 
 		// reload instance with new value
 		$this->Reload();
@@ -3573,10 +3595,10 @@ abstract class DBObject implements iDisplay
 		if ($sTable == '') return;
 
 		$sPKField = '`'.MetaModel::DBGetKey($sTableClass).'`';
-		$sKey = CMDBSource::Quote($this->m_iKey);
+		$sKey = self::$oCMDBSource->Quote($this->m_iKey);
 
 		$sDeleteSQL = "DELETE FROM `$sTable` WHERE $sPKField = $sKey";
-		CMDBSource::DeleteFrom($sDeleteSQL);
+		self::$oCMDBSource->DeleteFrom($sDeleteSQL);
 	}
 
     /**
@@ -3625,8 +3647,8 @@ abstract class DBObject implements iDisplay
 				// Update the left & right indexes for each hierarchical key
 				$sTable = $sTable = MetaModel::DBGetTable(get_class($this), $sAttCode);
 				/** @var \AttributeHierarchicalKey $oAttDef */
-				$sSQL = "SELECT `".$oAttDef->GetSQLRight()."` AS `right`, `".$oAttDef->GetSQLLeft()."` AS `left` FROM `$sTable` WHERE id=".CMDBSource::Quote($this->m_iKey);
-				$aRes = CMDBSource::QueryToArray($sSQL);
+				$sSQL = "SELECT `".$oAttDef->GetSQLRight()."` AS `right`, `".$oAttDef->GetSQLLeft()."` AS `left` FROM `$sTable` WHERE id=".self::$oCMDBSource->Quote($this->m_iKey);
+				$aRes = self::$oCMDBSource->QueryToArray($sSQL);
 				$iMyLeft = $aRes[0]['left'];
 				$iMyRight = $aRes[0]['right'];
 				$iDelta = $iMyRight - $iMyLeft + 1;
@@ -3634,7 +3656,7 @@ abstract class DBObject implements iDisplay
 
 				// No new parent for now, insert completely at the right of the tree
 				$sSQL = "SELECT max(`".$oAttDef->GetSQLRight()."`) AS max FROM `$sTable`";
-				$aRes = CMDBSource::QueryToArray($sSQL);
+				$aRes = self::$oCMDBSource->QueryToArray($sSQL);
 				if (count($aRes) == 0)
 				{
 					$iNewLeft = 1;
@@ -3668,7 +3690,7 @@ abstract class DBObject implements iDisplay
 				$iTransactionRetry--;
 				if ($bIsTransactionEnabled)
 				{
-					CMDBSource::Query('START TRANSACTION');
+					self::$oCMDBSource->Query('START TRANSACTION');
 				}
 				foreach (MetaModel::EnumParentClasses(get_class($this), ENUM_PARENT_CLASSES_ALL) as $sParentClass)
 				{
@@ -3676,7 +3698,7 @@ abstract class DBObject implements iDisplay
 				}
 				if ($bIsTransactionEnabled)
 				{
-					CMDBSource::Query('COMMIT');
+					self::$oCMDBSource->Query('COMMIT');
 				}
 				break;
 			}
@@ -3685,8 +3707,8 @@ abstract class DBObject implements iDisplay
 				IssueLog::Error($e->getMessage());
 				if ($bIsTransactionEnabled)
 				{
-					CMDBSource::Query('ROLLBACK');
-					if (!CMDBSource::IsInsideTransaction() && CMDBSource::IsDeadlockException($e))
+					self::$oCMDBSource->Query('ROLLBACK');
+					if (!self::$oCMDBSource->IsInsideTransaction() && self::$oCMDBSource->IsDeadlockException($e))
 					{
 						// Deadlock found when trying to get lock; try restarting transaction
 						if ($iTransactionRetry > 0)
@@ -5587,7 +5609,7 @@ abstract class DBObject implements iDisplay
 		$sJoins = implode(' INNER JOIN ', $aJoins);
 		$sValues = implode(', ', $aUpdates);
 		$sUpdateQuery = "UPDATE $sJoins SET $sValues WHERE `$sRootTable`.`$sRootKey` = ".$this->GetKey();
-		CMDBSource::Query($sUpdateQuery);
+		self::$oCMDBSource->Query($sUpdateQuery);
 	}
 
 	/**

@@ -370,6 +370,8 @@ return array(
     'Combodo\\iTop\\Core\\Authentication\\Client\\OAuth\\OAuthClientProviderFactory' => $baseDir . '/sources/Core/Authentication/Client/OAuth/OAuthClientProviderFactory.php',
     'Combodo\\iTop\\Core\\Authentication\\Client\\OAuth\\OAuthClientProviderGoogle' => $baseDir . '/sources/Core/Authentication/Client/OAuth/OAuthClientProviderGoogle.php',
     'Combodo\\iTop\\Core\\CMDBChange\\CMDBChangeOrigin' => $baseDir . '/sources/Core/CMDBChange/CMDBChangeOrigin.php',
+    'Combodo\\iTop\\Core\\CMDBSource\\CMDBSourceService' => $baseDir . '/sources/Core/CMDBSource/CMDBSourceService.php',
+    'Combodo\\iTop\\Core\\CMDBSource\\iCMDBSourceService' => $baseDir . '/sources/Core/CMDBSource/iCMDBSourceService.php',
     'Combodo\\iTop\\Core\\DbConnectionWrapper' => $baseDir . '/core/DbConnectionWrapper.php',
     'Combodo\\iTop\\Core\\Email\\EmailFactory' => $baseDir . '/sources/Core/Email/EmailFactory.php',
     'Combodo\\iTop\\Core\\Email\\iEMail' => $baseDir . '/sources/Core/Email/iEMail.php',

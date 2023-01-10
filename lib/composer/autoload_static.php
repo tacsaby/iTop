@@ -735,6 +735,8 @@ class ComposerStaticInit7f81b4a2a468a061c306af5e447a9a9f
         'Combodo\\iTop\\Core\\Authentication\\Client\\OAuth\\OAuthClientProviderFactory' => __DIR__ . '/../..' . '/sources/Core/Authentication/Client/OAuth/OAuthClientProviderFactory.php',
         'Combodo\\iTop\\Core\\Authentication\\Client\\OAuth\\OAuthClientProviderGoogle' => __DIR__ . '/../..' . '/sources/Core/Authentication/Client/OAuth/OAuthClientProviderGoogle.php',
         'Combodo\\iTop\\Core\\CMDBChange\\CMDBChangeOrigin' => __DIR__ . '/../..' . '/sources/Core/CMDBChange/CMDBChangeOrigin.php',
+        'Combodo\\iTop\\Core\\CMDBSource\\CMDBSourceService' => __DIR__ . '/../..' . '/sources/Core/CMDBSource/CMDBSourceService.php',
+        'Combodo\\iTop\\Core\\CMDBSource\\iCMDBSourceService' => __DIR__ . '/../..' . '/sources/Core/CMDBSource/iCMDBSourceService.php',
         'Combodo\\iTop\\Core\\DbConnectionWrapper' => __DIR__ . '/../..' . '/core/DbConnectionWrapper.php',
         'Combodo\\iTop\\Core\\Email\\EmailFactory' => __DIR__ . '/../..' . '/sources/Core/Email/EmailFactory.php',
         'Combodo\\iTop\\Core\\Email\\iEMail' => __DIR__ . '/../..' . '/sources/Core/Email/iEMail.php',
