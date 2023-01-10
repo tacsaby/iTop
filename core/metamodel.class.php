@@ -4187,7 +4187,7 @@ abstract class MetaModel
 					} elseif (is_array($value)) {
 						$aScalarArgs[$sArgName] = $value;
 					} else {
-						if ($value instanceof iOrmSet) {
+						if ($value instanceof iOrmset) {
 							$aScalarArgs[$sArgName] = $value->GetValueForQuery();
 						}
 					}
