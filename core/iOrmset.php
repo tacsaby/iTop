@@ -9,7 +9,7 @@
  * @since 3.1.0
  */
 
-interface iOrmSet
+interface iOrmset
 {
 	/**
 	 * used for query and compare values in import
