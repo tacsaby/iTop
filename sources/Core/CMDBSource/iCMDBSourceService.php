@@ -28,7 +28,7 @@ interface iCMDBSourceService
 	 * @see https://dev.mysql.com/doc/refman/5.7/en/charset-column.html
 	 * @since 2.5.1 N°1001 switch to utf8mb4
 	 */
-	public function GetSqlStringColumnDefinition();
+	public function GetSqlStringColumnDefinition(): string;
 
 	/**
 	 * @param Config $oConfig
