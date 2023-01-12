@@ -10,18 +10,28 @@ use Combodo\iTop\Core\CMDBSource\CMDBSourceService;
 
 class MockCMDBSourceService extends CMDBSourceService
 {
-	private $iLevel = 0;
+	private static $iLevel = 0;
 
 	public function Query($sSQLQuery)
 	{
-		echo __METHOD__.": level: $this->iLevel - $sSQLQuery\n";
+		//$iLevel = self::$iLevel;
+		//echo __METHOD__.": level: $iLevel - $sSQLQuery\n";
 
 		if (preg_match('/^START TRANSACTION;?$/i', $sSQLQuery)) {
-			$this->iLevel++;
+			if (self::$iLevel === 0) {
+				echo __METHOD__.": $sSQLQuery\n";
+			}
+			self::$iLevel++;
 		} elseif (preg_match('/^COMMIT;?$/i', $sSQLQuery)) {
-			$this->iLevel--;
+			self::$iLevel--;
+			if (self::$iLevel === 0) {
+				echo __METHOD__.": $sSQLQuery\n";
+			}
 		} elseif (preg_match('/^ROLLBACK;?$/i', $sSQLQuery)) {
-			$this->iLevel--;
+			self::$iLevel--;
+			if (self::$iLevel === 0) {
+				echo __METHOD__.": $sSQLQuery\n";
+			}
 		}
 
 		return parent::Query($sSQLQuery);
@@ -29,7 +39,8 @@ class MockCMDBSourceService extends CMDBSourceService
 
 	public function InsertInto($sSQLQuery)
 	{
-		echo __METHOD__.": level: $this->iLevel - $sSQLQuery\n";
+		$iLevel = self::$iLevel;
+		echo __METHOD__.": level: $iLevel - $sSQLQuery\n";
 
 		return parent::InsertInto($sSQLQuery);
 	}
@@ -37,7 +48,8 @@ class MockCMDBSourceService extends CMDBSourceService
 	public function IsInsideTransaction()
 	{
 		$bInsideTransaction = parent::IsInsideTransaction();
-		echo __METHOD__.": $bInsideTransaction\n";
+		//$bInsideTransaction = (self::$iLevel === 0);
+		//echo __METHOD__.": $bInsideTransaction\n";
 
 		return $bInsideTransaction;
 	}
