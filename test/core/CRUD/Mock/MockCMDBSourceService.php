@@ -32,6 +32,8 @@ class MockCMDBSourceService extends CMDBSourceService
 			if (self::$iLevel === 0) {
 				echo __METHOD__.": $sSQLQuery\n";
 			}
+		} else {
+			echo __METHOD__.": $sSQLQuery\n";
 		}
 
 		return parent::Query($sSQLQuery);

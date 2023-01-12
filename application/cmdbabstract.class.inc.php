@@ -183,10 +183,6 @@ abstract class cmdbAbstractObject extends CMDBObject implements iDisplay
 	/** @var array initial attributes flags cache [attcode]['flags'] */
 	protected $aInitialAttributesFlags;
 
-	protected $iUpdateLoopCount;
-
-	const MAX_UPDATE_LOOP_COUNT = 10;
-
 
 	/**
 	 * Constructor from a row of data (as a hash 'attcode' => value)
@@ -204,7 +200,6 @@ abstract class cmdbAbstractObject extends CMDBObject implements iDisplay
 		$this->sDisplayMode = static::DEFAULT_DISPLAY_MODE;
 		$this->bAllowWrite = false;
 		$this->bAllowDelete = false;
-		$this->iUpdateLoopCount = 0;
 	}
 
 	/**
@@ -4410,9 +4405,19 @@ HTML;
 		return $oNewObj;
 	}
 
+	private static int $iUpdateLoopCount = 0;
+
 	public function DBUpdate()
 	{
+		self::$iUpdateLoopCount++;
+		if (self::$iUpdateLoopCount > self::MAX_EMBEDDED_UPDATE_LOOPS) {
+			return false;
+		}
+
 		$res = parent::DBUpdate();
+		if ($res === false) {
+			return false;
+		}
 
 		$this->SetWarningsAsSessionMessages('update');
 
@@ -4442,21 +4447,10 @@ HTML;
 
 		$aChanges = $this->ListChanges();
 		if (count($aChanges) != 0) {
-			$this->iUpdateLoopCount++;
-			if ($this->iUpdateLoopCount > self::MAX_UPDATE_LOOP_COUNT) {
-				$sClass = get_class($this);
-				$sKey = $this->GetKey();
-				$aPlugins = [];
-				foreach (MetaModel::EnumPlugins('iApplicationObjectExtension') as $oExtensionInstance) {
-					$aPlugins[] = get_class($oExtensionInstance);
-				}
-				$sPlugins = implode(', ', $aPlugins);
-				IssueLog::Error("CRUD: DBUpdate $sClass::$sKey Update loop detected plugins: $sPlugins", LogChannels::DM_CRUD);
-			} else {
-				return $this->DBUpdate();
-			}
+			return $this->DBUpdate();
 		}
 
+		self::$iUpdateLoopCount = 0;
 		return $res;
 	}
 

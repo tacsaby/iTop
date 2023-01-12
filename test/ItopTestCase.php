@@ -48,6 +48,9 @@ class ItopTestCase extends TestCase
 		@include_once '../../../../../../../../approot.inc.php';
 		@include_once getcwd().'/approot.inc.php'; // this is when launching phpunit from within the IDE
 
+		/*
+		 * In order to activate the debug define an environment variable DEBUG_UNIT_TEST=1
+		 */
 		static::$DEBUG_UNIT_TEST = getenv('DEBUG_UNIT_TEST');
 
 		$this->debug("\n----------\n---------- ".$this->getName()."\n----------\n");
