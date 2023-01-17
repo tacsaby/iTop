@@ -1133,6 +1133,9 @@ class iTopDesignFormat
 		// N°5563 AttributeLinkedSetIndirect
 		// - remove read_only attribute (added in 3.1)
 		$this->RemoveNodeFromXPath("/itop_design/classes/class/fields/field[@xsi:type='AttributeLinkedSetIndirect']/read_only");
+
+		// N°2783 Custom zlists
+		$this->RemoveNodeFromXPath("/itop_design/classes//class/presentation/custom_presentations");
 	}
 
 	/**
