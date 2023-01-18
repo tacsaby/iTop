@@ -1063,7 +1063,7 @@ EOF
 				$aParams = utils::ReadParam('params', '', false, 'raw_data');
 				$sDashletClass = $aParams['attr_dashlet_class'];
 				$sDashletType = $aParams['attr_dashlet_type'];
-			$sDashletId = utils::HtmlEntities($aParams['attr_dashlet_id']);
+				$sDashletId = utils::HtmlEntities($aParams['attr_dashlet_id']);
 				$aUpdatedProperties = $aParams['updated']; // Code of the changed properties as an array: 'attr_xxx', 'attr_xxy', etc...
 				$aPreviousValues = $aParams['previous_values']; // hash array: 'attr_xxx' => 'old_value'
 				if (is_subclass_of($sDashletClass, 'Dashlet')) {
@@ -2550,6 +2550,14 @@ EOF
 			case 'object.modify':
 				$oController = new ObjectController();
 				$oPage = $oController->Modify();
+				break;
+
+			//--------------------------------
+			// Hover card
+			//--------------------------------
+			case 'get_small_details':
+
+				$oAjaxRenderController->GetSmallDetails($oPage);
 				break;
 
 			default:

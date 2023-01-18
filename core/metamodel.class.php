@@ -7640,3 +7640,4 @@ MetaModel::RegisterZList("preview", array("description" => "All attributes visib
 MetaModel::RegisterZList("standard_search", array("description" => "List of criteria for the standard search", "type" => "filters"));
 MetaModel::RegisterZList("advanced_search", array("description" => "List of criteria for the advanced search", "type" => "filters"));
 MetaModel::RegisterZList("default_search", array("description" => "List of criteria displayed by default during search", "type" => "filters"));
+MetaModel::RegisterZList("small_details", array("description" => "List of criteria displayed by default during search", "type" => "attributes"));

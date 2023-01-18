@@ -3355,4 +3355,12 @@ HTML;
 	{
 		return in_array($sTrait, self::TraitsUsedByClass($sClass, true));
 	}
+	
+	public static function ShouldDisplayObjectPreview($sClass){
+		$aDetailsList = MetaModel::GetZListItems($sClass, 'small_details');
+		if(!empty($aDetailsList) && appUserPreferences::GetPref('display_object_preview', true)){
+			return true;
+		}
+		return false;
+	}
 }

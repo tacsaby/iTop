@@ -771,6 +771,8 @@ const CombodoGlobalToolbox = {
  * @since 3.0.0
  */
 const CombodoTooltip = {
+	
+	aTooltipRemoteContent: {},
 	/**
 	 * Instantiate a tooltip on oElem from its data attributes
 	 *
@@ -863,8 +865,45 @@ const CombodoTooltip = {
 		const sHideDelay = oElem.attr('data-tooltip-hide-delay');
 		oOptions['delay'] = [
 			(typeof sShowDelay === 'undefined') ? 200 : parseInt(sShowDelay),
-			(typeof sHideDelay === 'undefined') ? null : parseInt(sHideDelay),
+			(typeof sHideDelay === 'undefined') ? null : 40000,// parseInt(sHideDelay),
 		];
+		oOptions['interactive'] = true
+		
+		const bRemoteContent = oElem.attr('data-tooltip-is-remote') === 'true'
+		if(bRemoteContent) {
+			oOptions['theme'] = 'light';
+			oOptions['maxWidth'] = 600;
+
+			oOptions['onCreate'] = function(instance) {
+				instance._isFetching = false;
+				instance._isLoaded = null;
+			};
+			oOptions['onShow'] = function(instance) {
+					if (instance._isFetching || instance._isLoaded || instance._error) {
+						return;
+					}
+					instance._isFetching = true;
+					let sRemoteUrl = oOptions['content'];
+					if(CombodoTooltip.aTooltipRemoteContent[sRemoteUrl] !== undefined){
+						instance.setContent(CombodoTooltip.aTooltipRemoteContent[sRemoteUrl]);
+					}
+					else {
+						instance.setContent('Loading...');
+						$.ajax(sRemoteUrl)
+							.done(function (html) {
+								instance.setContent(html);
+								CombodoTooltip.aTooltipRemoteContent[sRemoteUrl] = html;
+								instance._isLoaded = true;
+							})
+							.fail(function () {
+								instance.setContent(`Request failed.`);
+							})
+							.always(function () {
+								instance._isFetching = false;
+							});
+					}
+				};
+		}
 
 		oOptions['theme'] = oElem.attr('data-tooltip-theme') ?? '';
 

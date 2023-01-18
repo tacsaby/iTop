@@ -3545,7 +3545,7 @@ EOF
 		return $aResult;
 	}
 
-	protected function GetFieldAsHtml($sClass, $sAttCode, $sStateAttCode)
+	public function GetFieldAsHtml($sClass, $sAttCode, $sStateAttCode)
 	{
 		$retVal = null;
 		if ($this->IsNew())
