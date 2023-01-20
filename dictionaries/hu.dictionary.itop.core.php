@@ -20,97 +20,97 @@
  * @license     http://opensource.org/licenses/AGPL-3.0
  */
 Dict::Add('HU HU', 'Hungarian', 'Magyar', array(
-	'Core:DeletedObjectLabel' => '%1s (deleted)~~',
-	'Core:DeletedObjectTip'   => 'The object has been deleted on %1$s (%2$s)~~',
+	'Core:DeletedObjectLabel' => '%1s (törölve)',
+	'Core:DeletedObjectTip'   => 'Az objektum törölve %1$s (%2$s)',
 
-	'Core:UnknownObjectLabel' => 'Object not found (class: %1$s, id: %2$d)~~',
-	'Core:UnknownObjectTip'   => 'The object could not be found. It may have been deleted some time ago and the log has been purged since.~~',
+	'Core:UnknownObjectLabel' => 'Az objektum nem található (osztály: %1$s, id: %2$d)',
+	'Core:UnknownObjectTip'   => 'Az objektum nem található. Valamikor kitörölhették és a napló is ürítve lett',
 
-	'Core:UniquenessDefaultError' => 'Uniqueness rule \'%1$s\' in error~~',
-	'Core:CheckConsistencyError'  => 'Consistency rules not followed: %1$s~~',
-	'Core:CheckValueError'        => 'Unexpected value for attribute \'%1$s\' (%2$s) : %3$s~~',
+	'Core:UniquenessDefaultError' => 'Egyediség szabály \'%1$s\' hiba',
+	'Core:CheckConsistencyError'  => 'Következetességi szabály nincs betartva: %1$s',
+	'Core:CheckValueError'        => 'Váratlan hiba az attribútumoknál \'%1$s\' (%2$s) : %3$s',
 
 	'Core:AttributeLinkedSet'  => 'Objektum tömbök',
 	'Core:AttributeLinkedSet+' => '',
 
-	'Core:AttributeLinkedSetDuplicatesFound' => 'Duplicates in the \'%1$s\' field : %2$s~~',
+	'Core:AttributeLinkedSetDuplicatesFound' => 'Ismétlődések \'%1$s\' mező : %2$s',
 
-	'Core:AttributeDashboard'  => 'Dashboard~~',
+	'Core:AttributeDashboard'  => 'Irányítópult',
 	'Core:AttributeDashboard+' => '',
 
-	'Core:AttributePhoneNumber'  => 'Phone number~~',
+	'Core:AttributePhoneNumber'  => 'Telefonszám',
 	'Core:AttributePhoneNumber+' => '',
 
-	'Core:AttributeObsolescenceDate' => 'Obsolescence date~~',
+	'Core:AttributeObsolescenceDate' => 'Elavulási dátum',
 	'Core:AttributeObsolescenceDate+' => '',
 
-	'Core:AttributeTagSet' => 'List of tags~~',
+	'Core:AttributeTagSet' => 'Címkék listája',
 	'Core:AttributeTagSet+' => '',
-	'Core:AttributeSet:placeholder' => 'click to add~~',
-	'Core:AttributeClassAttCodeSet:ItemLabel:AttributeFromClass' => '%1$s (%2$s)~~',
-	'Core:AttributeClassAttCodeSet:ItemLabel:AttributeFromOneChildClass' => '%1$s (%2$s from %3$s)~~',
-	'Core:AttributeClassAttCodeSet:ItemLabel:AttributeFromSeveralChildClasses' => '%1$s (%2$s from child classes)~~',
+	'Core:AttributeSet:placeholder' => 'hozzáadás',
+	'Core:AttributeClassAttCodeSet:ItemLabel:AttributeFromClass' => '%1$s (%2$s)',
+	'Core:AttributeClassAttCodeSet:ItemLabel:AttributeFromOneChildClass' => '%1$s (%2$s a %3$s -ból)',
+	'Core:AttributeClassAttCodeSet:ItemLabel:AttributeFromSeveralChildClasses' => '%1$s (%2$s gyermekosztályokból)',
 
-	'Core:AttributeCaseLog' => 'Log~~',
+	'Core:AttributeCaseLog' => 'Eseménynapló',
 	'Core:AttributeCaseLog+' => '',
 
-	'Core:AttributeMetaEnum' => 'Computed enum~~',
+	'Core:AttributeMetaEnum' => 'Számított enum',
 	'Core:AttributeMetaEnum+' => '',
 
 	'Core:AttributeLinkedSetIndirect' => 'Objektum tömbök (N-N)',
 	'Core:AttributeLinkedSetIndirect+' => '',
 
-	'Core:AttributeInteger' => 'Integer',
+	'Core:AttributeInteger' => 'Egész',
 	'Core:AttributeInteger+' => '',
 
-	'Core:AttributeDecimal' => 'Decimal',
+	'Core:AttributeDecimal' => 'Decimális',
 	'Core:AttributeDecimal+' => '',
 
-	'Core:AttributeBoolean' => 'Boolean',
+	'Core:AttributeBoolean' => 'Logikai',
 	'Core:AttributeBoolean+' => '',
 	'Core:AttributeBoolean/Value:null' => '',
-	'Core:AttributeBoolean/Value:yes' => 'Yes~~',
-	'Core:AttributeBoolean/Value:no' => 'No~~',
+	'Core:AttributeBoolean/Value:yes' => 'Igen',
+	'Core:AttributeBoolean/Value:no' => 'Nem',
 
-	'Core:AttributeArchiveFlag' => 'Archive flag~~',
-	'Core:AttributeArchiveFlag/Value:yes' => 'Yes~~',
-	'Core:AttributeArchiveFlag/Value:yes+' => 'This object is visible only in archive mode~~',
-	'Core:AttributeArchiveFlag/Value:no' => 'No~~',
-	'Core:AttributeArchiveFlag/Label' => 'Archived~~',
+	'Core:AttributeArchiveFlag' => 'Archív jel',
+	'Core:AttributeArchiveFlag/Value:yes' => 'Igen',
+	'Core:AttributeArchiveFlag/Value:yes+' => 'Ez az objektum csak archív módban látszik',
+	'Core:AttributeArchiveFlag/Value:no' => 'Nem',
+	'Core:AttributeArchiveFlag/Label' => 'Archivált',
 	'Core:AttributeArchiveFlag/Label+' => '',
-	'Core:AttributeArchiveDate/Label' => 'Archive date~~',
+	'Core:AttributeArchiveDate/Label' => 'Archív dátum',
 	'Core:AttributeArchiveDate/Label+' => '',
 
-	'Core:AttributeObsolescenceFlag' => 'Obsolescence flag~~',
-	'Core:AttributeObsolescenceFlag/Value:yes' => 'Yes~~',
-	'Core:AttributeObsolescenceFlag/Value:yes+' => 'This object is excluded from the impact analysis, and hidden from search results~~',
-	'Core:AttributeObsolescenceFlag/Value:no' => 'No~~',
-	'Core:AttributeObsolescenceFlag/Label' => 'Obsolete~~',
-	'Core:AttributeObsolescenceFlag/Label+' => 'Computed dynamically on other attributes~~',
-	'Core:AttributeObsolescenceDate/Label' => 'Obsolescence date~~',
-	'Core:AttributeObsolescenceDate/Label+' => 'Approximative date at which the object has been considered obsolete~~',
+	'Core:AttributeObsolescenceFlag' => 'Elavultság jel',
+	'Core:AttributeObsolescenceFlag/Value:yes' => 'Igen',
+	'Core:AttributeObsolescenceFlag/Value:yes+' => 'Ez az objektum ki va zárva a hatásanalízisből és a keresésekből',
+	'Core:AttributeObsolescenceFlag/Value:no' => 'Nem',
+	'Core:AttributeObsolescenceFlag/Label' => 'Elavult',
+	'Core:AttributeObsolescenceFlag/Label+' => 'Dinamikusan számítva más attribútumokon',
+	'Core:AttributeObsolescenceDate/Label' => 'Avulási dátum',
+	'Core:AttributeObsolescenceDate/Label+' => '',
 
 	'Core:AttributeString' => 'String',
 	'Core:AttributeString+' => '',
 
-	'Core:AttributeClass' => 'Class',
+	'Core:AttributeClass' => 'Osztály',
 	'Core:AttributeClass+' => '',
 
 	'Core:AttributeApplicationLanguage' => 'Alkalmazás nyelve',
 	'Core:AttributeApplicationLanguage+' => '',
 
-	'Core:AttributeFinalClass' => 'Class (auto)',
+	'Core:AttributeFinalClass' => 'Osztály (auto)',
 	'Core:AttributeFinalClass+' => '',
 
 	'Core:AttributePassword' => 'Jelszó',
 	'Core:AttributePassword+' => '',
 
-	'Core:AttributeEncryptedString' => 'Encrypted string',
+	'Core:AttributeEncryptedString' => 'Titkosított string',
 	'Core:AttributeEncryptedString+' => '',
-	'Core:AttributeEncryptUnknownLibrary' => 'Encryption library specified (%1$s) unknown~~',
-	'Core:AttributeEncryptFailedToDecrypt' => '** decryption error **~~',
+	'Core:AttributeEncryptUnknownLibrary' => 'A megadott (%1$s) titkosítási könyvtár ismeretlen',
+	'Core:AttributeEncryptFailedToDecrypt' => '** dekódolási hiba **',
 
-	'Core:AttributeText' => 'Text',
+	'Core:AttributeText' => 'Szöveg',
 	'Core:AttributeText+' => '',
 
 	'Core:AttributeHTML' => 'HTML',
@@ -137,7 +137,7 @@ Dict::Add('HU HU', 'Hungarian', 'Magyar', array(
 	'Core:AttributeTemplateHTML' => 'Sablon HTML',
 	'Core:AttributeTemplateHTML+' => '',
 
-	'Core:AttributeDateTime' => 'Date/time',
+	'Core:AttributeDateTime' => 'Dátum/idő',
 	'Core:AttributeDateTime+' => '',
 	'Core:AttributeDateTime?SmartSearch' => '
 <p>
@@ -155,7 +155,7 @@ Operators:<br/>
 If the time is omitted, it defaults to 00:00:00
 </p>~~',
 
-	'Core:AttributeDate' => 'Date',
+	'Core:AttributeDate' => 'Dátum',
 	'Core:AttributeDate+' => '',
 	'Core:AttributeDate?SmartSearch' => '
 <p>
@@ -176,8 +176,8 @@ Operators:<br/>
 	'Core:AttributeExternalKey' => 'Külső kulcs',
 	'Core:AttributeExternalKey+' => '',
 
-	'Core:AttributeHierarchicalKey' => 'Hierarchical Key~~',
-	'Core:AttributeHierarchicalKey+' => 'External (or foreign) key to the parent~~',
+	'Core:AttributeHierarchicalKey' => 'Hierarchikus kulcs',
+	'Core:AttributeHierarchicalKey+' => '',
 
 	'Core:AttributeExternalField' => 'Külső mező',
 	'Core:AttributeExternalField+' => '',
@@ -188,30 +188,30 @@ Operators:<br/>
 	'Core:AttributeBlob' => 'Blob',
 	'Core:AttributeBlob+' => '',
 
-	'Core:AttributeOneWayPassword' => 'One way password',
+	'Core:AttributeOneWayPassword' => 'Egyszeri jelszó',
 	'Core:AttributeOneWayPassword+' => '',
 
-	'Core:AttributeTable' => 'Table',
+	'Core:AttributeTable' => 'Táblázat',
 	'Core:AttributeTable+' => '',
 
 	'Core:AttributePropertySet' => 'Tulajdonságok',
 	'Core:AttributePropertySet+' => '',
 
-	'Core:AttributeFriendlyName' => 'Friendly name~~',
-	'Core:AttributeFriendlyName+' => 'Attribute created automatically ; the friendly name is computed after several attributes~~',
+	'Core:AttributeFriendlyName' => 'Rövid név',
+	'Core:AttributeFriendlyName+' => '',
 
-	'Core:FriendlyName-Label' => 'Friendly name~~',
-	'Core:FriendlyName-Description' => 'Friendly name~~',
+	'Core:FriendlyName-Label' => 'Rövid név',
+	'Core:FriendlyName-Description' => 'Rövid név',
 
-	'Core:AttributeTag' => 'Tags~~',
+	'Core:AttributeTag' => 'Címkék',
 	'Core:AttributeTag+' => '',
 	
-	'Core:Context=REST/JSON' => 'REST~~',
-	'Core:Context=Synchro' => 'Synchro~~',
-	'Core:Context=Setup' => 'Setup~~',
-	'Core:Context=GUI:Console' => 'Console~~',
-	'Core:Context=CRON' => 'cron~~',
-	'Core:Context=GUI:Portal' => 'Portal~~',
+	'Core:Context=REST/JSON' => 'REST',
+	'Core:Context=Synchro' => 'Synchro',
+	'Core:Context=Setup' => 'Setup',
+	'Core:Context=GUI:Console' => 'Konzol',
+	'Core:Context=CRON' => 'cron',
+	'Core:Context=GUI:Portal' => 'Portál',
 ));
 
 
@@ -231,14 +231,14 @@ Dict::Add('HU HU', 'Hungarian', 'Magyar', array(
 	'Class:CMDBChange/Attribute:date+' => '',
 	'Class:CMDBChange/Attribute:userinfo' => 'Egyéb információ',
 	'Class:CMDBChange/Attribute:userinfo+' => '',
-	'Class:CMDBChange/Attribute:origin/Value:interactive' => 'User interaction in the GUI~~',
-	'Class:CMDBChange/Attribute:origin/Value:csv-import.php' => 'CSV import script~~',
-	'Class:CMDBChange/Attribute:origin/Value:csv-interactive' => 'CSV import in the GUI~~',
-	'Class:CMDBChange/Attribute:origin/Value:email-processing' => 'Email processing~~',
-	'Class:CMDBChange/Attribute:origin/Value:synchro-data-source' => 'Synchro. data source~~',
-	'Class:CMDBChange/Attribute:origin/Value:webservice-rest' => 'REST/JSON webservices~~',
-	'Class:CMDBChange/Attribute:origin/Value:webservice-soap' => 'SOAP webservices~~',
-	'Class:CMDBChange/Attribute:origin/Value:custom-extension' => 'By an extension~~',
+	'Class:CMDBChange/Attribute:origin/Value:interactive' => 'Felhasználói interakció a GUI-ban',
+	'Class:CMDBChange/Attribute:origin/Value:csv-import.php' => 'CSV import script',
+	'Class:CMDBChange/Attribute:origin/Value:csv-interactive' => 'CSV import a GUI-ban',
+	'Class:CMDBChange/Attribute:origin/Value:email-processing' => 'Email feldolgozás',
+	'Class:CMDBChange/Attribute:origin/Value:synchro-data-source' => 'Synchro. adatforrás',
+	'Class:CMDBChange/Attribute:origin/Value:webservice-rest' => 'REST/JSON webszolgáltatások',
+	'Class:CMDBChange/Attribute:origin/Value:webservice-soap' => 'SOAP webszolgáltatások',
+	'Class:CMDBChange/Attribute:origin/Value:custom-extension' => 'Bővítmény',
 ));
 
 //
@@ -308,19 +308,19 @@ Dict::Add('HU HU', 'Hungarian', 'Magyar', array(
 	'Change:ObjectCreated' => 'Objektum létrehozva',
 	'Change:ObjectDeleted' => 'Objektum törölve',
 	'Change:ObjectModified' => 'Objektum módosítva',
-	'Change:TwoAttributesChanged' => 'Edited %1$s and %2$s~~',
-	'Change:ThreeAttributesChanged' => 'Edited %1$s, %2$s and 1 other~~',
-	'Change:FourOrMoreAttributesChanged' => 'Edited %1$s, %2$s and %3$s others~~',
+	'Change:TwoAttributesChanged' => 'Szerkesztve %1$s és %2$s',
+	'Change:ThreeAttributesChanged' => 'Szerkesztve %1$s, %2$s és 1 másik',
+	'Change:FourOrMoreAttributesChanged' => 'Szerkesztve %1$s, %2$s és %3$s egyebek',
 	'Change:AttName_SetTo_NewValue_PreviousValue_OldValue' => '%1$s új értéke: %2$s (előző értéke: %3$s)',
 	'Change:AttName_SetTo' => '%1$s új értéke %2$s',
 	'Change:Text_AppendedTo_AttName' => '%1$s hozzáfűzve %2$s',
 	'Change:AttName_Changed_PreviousValue_OldValue' => '%1$s módosítva, előző érték: %2$s',
 	'Change:AttName_Changed' => '%1$s módosítva',
 	'Change:AttName_EntryAdded' => '%1$s módosítva, új bejegyzés hozzáadva.',
-	'Change:State_Changed_NewValue_OldValue' => 'Changed from %2$s to %1$s~~',
-	'Change:LinkSet:Added' => 'added %1$s~~',
-	'Change:LinkSet:Removed' => 'removed %1$s~~',
-	'Change:LinkSet:Modified' => 'modified %1$s~~',
+	'Change:State_Changed_NewValue_OldValue' => '%2$s -ról módosítva %1$s -re',
+	'Change:LinkSet:Added' => 'hozzáadva %1$s',
+	'Change:LinkSet:Removed' => 'eltávolítva %1$s',
+	'Change:LinkSet:Modified' => 'módosítva %1$s',
 ));
 
 //
