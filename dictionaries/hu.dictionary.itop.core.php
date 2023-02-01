@@ -234,7 +234,7 @@ Dict::Add('HU HU', 'Hungarian', 'Magyar', array(
 	'Class:CMDBChange/Attribute:origin/Value:interactive' => 'Felhasználói interakció a grafikus felületen',
 	'Class:CMDBChange/Attribute:origin/Value:csv-import.php' => 'CSV import script',
 	'Class:CMDBChange/Attribute:origin/Value:csv-interactive' => 'CSV import a grafikus felületen',
-	'Class:CMDBChange/Attribute:origin/Value:email-processing' => 'Email feldolgozás',
+	'Class:CMDBChange/Attribute:origin/Value:email-processing' => 'E-mail feldolgozás',
 	'Class:CMDBChange/Attribute:origin/Value:synchro-data-source' => 'Synchro. adatforrás',
 	'Class:CMDBChange/Attribute:origin/Value:webservice-rest' => 'REST/JSON webszolgáltatás',
 	'Class:CMDBChange/Attribute:origin/Value:webservice-soap' => 'SOAP webszolgáltatás',
@@ -369,7 +369,7 @@ Dict::Add('HU HU', 'Hungarian', 'Magyar', array(
 Dict::Add('HU HU', 'Hungarian', 'Magyar', array(
 	'Class:EventNotification' => 'Értesítés esemény',
 	'Class:EventNotification+' => '',
-	'Class:EventNotification/Attribute:trigger_id' => 'Kiváltó ok',
+	'Class:EventNotification/Attribute:trigger_id' => 'Trigger',
 	'Class:EventNotification/Attribute:trigger_id+' => '',
 	'Class:EventNotification/Attribute:action_id' => 'Felhasználó',
 	'Class:EventNotification/Attribute:action_id+' => '',
@@ -428,7 +428,7 @@ Dict::Add('HU HU', 'Hungarian', 'Magyar', array(
 //
 
 Dict::Add('HU HU', 'Hungarian', 'Magyar', array(
-	'Class:EventWebService' => 'Web szolgáltatás esemény',
+	'Class:EventWebService' => 'Webszolgáltatás esemény',
 	'Class:EventWebService+' => '',
 	'Class:EventWebService/Attribute:verb' => 'Kérelem',
 	'Class:EventWebService/Attribute:verb+' => '',
@@ -438,7 +438,7 @@ Dict::Add('HU HU', 'Hungarian', 'Magyar', array(
 	'Class:EventWebService/Attribute:log_info+' => '',
 	'Class:EventWebService/Attribute:log_warning' => 'Figyelmeztetés napló',
 	'Class:EventWebService/Attribute:log_warning+' => '',
-	'Class:EventWebService/Attribute:log_error' => 'Hiba napló',
+	'Class:EventWebService/Attribute:log_error' => 'Hibanapló',
 	'Class:EventWebService/Attribute:log_error+' => '',
 	'Class:EventWebService/Attribute:data' => 'Adat',
 	'Class:EventWebService/Attribute:data+' => '',
@@ -468,11 +468,11 @@ Dict::Add('HU HU', 'Hungarian', 'Magyar', array(
 Dict::Add('HU HU', 'Hungarian', 'Magyar', array(
 	'Class:EventLoginUsage' => 'Belépés esemény',
 	'Class:EventLoginUsage+' => '',
-	'Class:EventLoginUsage/Attribute:user_id' => 'Felhasználó név',
+	'Class:EventLoginUsage/Attribute:user_id' => 'Felhasználónév',
 	'Class:EventLoginUsage/Attribute:user_id+' => '',
 	'Class:EventLoginUsage/Attribute:contact_name' => 'Felhasználó neve',
 	'Class:EventLoginUsage/Attribute:contact_name+' => '',
-	'Class:EventLoginUsage/Attribute:contact_email' => 'Felhasználó email',
+	'Class:EventLoginUsage/Attribute:contact_email' => 'Felhasználó e-mail címe',
 	'Class:EventLoginUsage/Attribute:contact_email+' => '',
 ));
 
@@ -483,7 +483,7 @@ Dict::Add('HU HU', 'Hungarian', 'Magyar', array(
 Dict::Add('HU HU', 'Hungarian', 'Magyar', array(
 	'Class:Action' => 'Egyedi intézkedések',
 	'Class:Action+' => '',
-	'Class:Action/Attribute:name' => 'Neve',
+	'Class:Action/Attribute:name' => 'Név',
 	'Class:Action/Attribute:name+' => '',
 	'Class:Action/Attribute:description' => 'Leírás',
 	'Class:Action/Attribute:description+' => '',
@@ -491,7 +491,7 @@ Dict::Add('HU HU', 'Hungarian', 'Magyar', array(
 	'Class:Action/Attribute:status+' => '',
 	'Class:Action/Attribute:status/Value:test' => 'Tesztelés alatt',
 	'Class:Action/Attribute:status/Value:test+' => '',
-	'Class:Action/Attribute:status/Value:enabled' => 'Éles üzemeben',
+	'Class:Action/Attribute:status/Value:enabled' => 'Használatban',
 	'Class:Action/Attribute:status/Value:enabled+' => '',
 	'Class:Action/Attribute:status/Value:disabled' => 'Inaktív',
 	'Class:Action/Attribute:status/Value:disabled+' => '',
@@ -521,7 +521,7 @@ Dict::Add('HU HU', 'Hungarian', 'Magyar', array(
 	'Class:ActionEmail/Attribute:status+' => 'Ez a státusz határozza meg, hogy ki kapjon értesítést: csak a teszt címzettje, mindenki (To, cc és Bcc) vagy senki.',
 	'Class:ActionEmail/Attribute:status/Value:test+' => 'Csak a teszt címzett kap értesítést',
 	'Class:ActionEmail/Attribute:status/Value:enabled+' => 'Minden To, Cc és Bcc e-mailről értesítést kap',
-	'Class:ActionEmail/Attribute:status/Value:disabled+' => 'Az email értesítés nem lesz elküldve',
+	'Class:ActionEmail/Attribute:status/Value:disabled+' => 'Az e-mail értesítés nem lesz elküldve',
 	'Class:ActionEmail/Attribute:test_recipient' => 'Teszt címzett',
 	'Class:ActionEmail/Attribute:test_recipient+' => '',
 	'Class:ActionEmail/Attribute:from' => 'Feladó',
@@ -530,7 +530,7 @@ Dict::Add('HU HU', 'Hungarian', 'Magyar', array(
 	'Class:ActionEmail/Attribute:from_label+' => 'A feladó neve bekerül az e-mail fejlécébe.',
 	'Class:ActionEmail/Attribute:reply_to' => 'Válaszcím',
 	'Class:ActionEmail/Attribute:reply_to+' => '',
-	'Class:ActionEmail/Attribute:reply_to_label' => 'Válaszcím (címke)',
+	'Class:ActionEmail/Attribute:reply_to_label' => 'Válaszadó',
 	'Class:ActionEmail/Attribute:reply_to_label+' => 'A válaszcím megjelenítendő neve az e-mail fejlécébe kerül.',
 	'Class:ActionEmail/Attribute:to' => 'Címzett',
 	'Class:ActionEmail/Attribute:to+' => '',
@@ -557,7 +557,7 @@ Dict::Add('HU HU', 'Hungarian', 'Magyar', array(
 //
 
 Dict::Add('HU HU', 'Hungarian', 'Magyar', array(
-	'Class:Trigger' => 'Kiváltó ok',
+	'Class:Trigger' => 'Trigger',
 	'Class:Trigger+' => '',
 	'Class:Trigger/Attribute:description' => 'Leírás',
 	'Class:Trigger/Attribute:description+' => '',
@@ -600,7 +600,7 @@ Dict::Add('HU HU', 'Hungarian', 'Magyar', array(
 Dict::Add('HU HU', 'Hungarian', 'Magyar', array(
 	'Class:TriggerOnStateChange' => 'Trigger (állapot változás)',
 	'Class:TriggerOnStateChange+' => '',
-	'Class:TriggerOnStateChange/Attribute:state' => 'Állapot',
+	'Class:TriggerOnStateChange/Attribute:state' => 'Státusz',
 	'Class:TriggerOnStateChange/Attribute:state+' => '',
 ));
 
@@ -723,7 +723,7 @@ Dict::Add('HU HU', 'Hungarian', 'Magyar', array(
 	'Class:SynchroDataSource/Attribute:user_delete_policy+' => '',
 	'Class:SynchroDataSource/Attribute:delete_policy/Value:never' => 'Senki',
 	'Class:SynchroDataSource/Attribute:delete_policy/Value:depends' => 'Csak adminisztrátorok',
-	'Class:SynchroDataSource/Attribute:delete_policy/Value:always' => 'Tíltott felhasználók',
+	'Class:SynchroDataSource/Attribute:delete_policy/Value:always' => 'Tiltott felhasználók',
 	'Class:SynchroDataSource/Attribute:delete_policy_update' => 'Szabályok frissítése',
 	'Class:SynchroDataSource/Attribute:delete_policy_update+' => '',
 	'Class:SynchroDataSource/Attribute:delete_policy_retention' => 'Késleltetés időtartama',
@@ -822,7 +822,7 @@ Dict::Add('HU HU', 'Hungarian', 'Magyar', array(
 	'Class:SynchroDataSource' => 'Szinkron adatforrás',
 	'Class:SynchroDataSource/Attribute:status/Value:implementation' => 'Megvalósított',
 	'Class:SynchroDataSource/Attribute:status/Value:obsolete' => 'Elavult',
-	'Class:SynchroDataSource/Attribute:status/Value:production' => 'Éles üzemben',
+	'Class:SynchroDataSource/Attribute:status/Value:production' => 'Használatban',
 	'Class:SynchroDataSource/Attribute:scope_restriction' => 'Tartalom szűkítés',
 	'Class:SynchroDataSource/Attribute:reconciliation_policy/Value:use_attributes' => 'A következő attribútum használata',
 	'Class:SynchroDataSource/Attribute:reconciliation_policy/Value:use_primary_key' => 'Elsődleges kulcs használata',
@@ -1006,7 +1006,7 @@ Dict::Add('HU HU', 'Hungarian', 'Magyar', array(
 	'Core:TagSetFieldData:ErrorDeleteUsedTag' => 'A felhasznált címkék nem törölhetők',
 	'Core:TagSetFieldData:ErrorDuplicateTagCodeOrLabel' => 'A címkéknek, kódoknak, feliratoknak egyedinek kell lennie',
 	'Core:TagSetFieldData:ErrorTagCodeSyntax' => 'A címkekódoknak 3 és %1$d közé eső alfanumerikus karaktereket kell tartalmaznia',
-	'Core:TagSetFieldData:ErrorTagCodeReservedWord' => 'A választott címke kód foglalt szót tartalmaz',
+	'Core:TagSetFieldData:ErrorTagCodeReservedWord' => 'A választott címkekód foglalt szót tartalmaz',
 	'Core:TagSetFieldData:ErrorTagLabelSyntax' => 'A címkefelirat nem tartalmazhat \'%1$s\' és üres sem lehet',
 	'Core:TagSetFieldData:ErrorCodeUpdateNotAllowed' => 'A címkekód nem változtatható ha használatban van',
 	'Core:TagSetFieldData:ErrorClassUpdateNotAllowed' => 'A címkék "objektum osztálya" nem változtatható',
@@ -1077,7 +1077,7 @@ Dict::Add('HU HU', 'Hungarian', 'Magyar', array(
 	'Class:AsyncTask/Attribute:planned+' => '',
 	'Class:AsyncTask/Attribute:event_id' => 'Esemény',
 	'Class:AsyncTask/Attribute:event_id+' => '',
-	'Class:AsyncTask/Attribute:finalclass' => 'Végső osztály',
+	'Class:AsyncTask/Attribute:finalclass' => 'Aszink. feladat',
 	'Class:AsyncTask/Attribute:finalclass+' => '',
 	'Class:AsyncTask/Attribute:status' => 'Státusz',
 	'Class:AsyncTask/Attribute:status+' => '',
