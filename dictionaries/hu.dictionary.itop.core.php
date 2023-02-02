@@ -1128,3 +1128,4 @@ Dict::Add('HU HU', 'Hungarian', 'Magyar', array(
 	'Class:ResourceSystemMenu' => 'Erőforrás rendszer menü',
 	'Class:ResourceSystemMenu+' => '',
 ));
+
