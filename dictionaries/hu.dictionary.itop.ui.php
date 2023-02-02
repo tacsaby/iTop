@@ -1675,3 +1675,4 @@ Dict::Add('HU HU', 'Hungarian', 'Magyar', array(
 	'UI:Dashboard:Edit'           => 'Oldal szerkesztése...',
 	'UI:Dashboard:Revert'         => 'Visszaállítás az eredeti verzióra...',
 ));
+
